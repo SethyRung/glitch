@@ -40,8 +40,5 @@
     "drizzle-kit": "^0.31.10",
     "oxfmt": "^0.44.0",
     "oxlint": "^1.59.0"
-  },
-  "overrides": {
-    "vue": "latest"
   }
 }
