@@ -1,6 +1,8 @@
 import type { games, purchases, refreshTokens, users } from "hub:db:schema";
 
-type DateFields<T, K extends keyof T> = Omit<T, K> & { [P in K]: string | null };
+type DateFields<T, K extends keyof T> = Omit<T, K> & {
+  [P in K]: string | null;
+};
 
 export type User = DateFields<typeof users.$inferSelect, "createdAt" | "updatedAt">;
 export type Game = DateFields<typeof games.$inferSelect, "createdAt" | "updatedAt">;
@@ -10,7 +12,7 @@ export type RefreshToken = DateFields<
   "createdAt" | "expiresAt" | "revokedAt"
 >;
 
-export enum ResponseCode {
+export enum ApiResponseCode {
   Success = "SUCCESS",
   Error = "ERROR",
   NotFound = "NOT_FOUND",
@@ -21,9 +23,9 @@ export enum ResponseCode {
   InternalError = "INTERNAL_ERROR",
 }
 
-export interface Response<T> {
+export interface ApiResponse<T> {
   status: {
-    code: ResponseCode;
+    code: ApiResponseCode;
     message: string;
     requestId: string;
     requestTime: number;
@@ -34,4 +36,9 @@ export interface Response<T> {
     limit: number;
     offset: number;
   };
+}
+
+export enum CookieName {
+  AccessToken = "access_token",
+  RefreshToken = "refresh_token",
 }
