@@ -1,16 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import type { User } from "#shared/types";
 
-export interface AccessTokenPayload {
+export interface Payload {
   userId: string;
-  email: string;
-  name: string;
-}
-
-export interface RefreshTokenPayload {
-  userId: string;
-  type: "refresh";
+  [key: string]: any;
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -21,69 +14,35 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
   return bcrypt.compare(password, hash);
 }
 
-export function generateAccessToken(
-  user: Omit<User, "passwordHash" | "createdAt" | "updatedAt">,
+export function generateTokens<T extends Payload>(
+  payload: T,
   config: { secret: string; expiresIn: string },
-): string {
-  const payload: AccessTokenPayload = {
-    userId: user.id,
-    email: user.email,
-    name: user.name,
-  };
-
+) {
   return jwt.sign(payload, config.secret, {
     expiresIn: config.expiresIn as Parameters<typeof jwt.sign>[2]["expiresIn"],
   });
 }
 
-export function generateRefreshToken(
-  userId: string,
-  config: { secret: string; expiresIn: string },
-): string {
-  const payload: RefreshTokenPayload = {
-    userId,
-    type: "refresh",
-  };
-
-  return jwt.sign(payload, config.secret, {
-    expiresIn: config.expiresIn as Parameters<typeof jwt.sign>[2]["expiresIn"],
-  });
-}
-
-export function verifyAccessToken(
-  token: string,
-  config: { secret: string },
-): AccessTokenPayload | null {
+export function verifyToken<T extends Payload>(token: string, config: { secret: string }) {
   try {
-    return jwt.verify(token, config.secret) as AccessTokenPayload;
+    return jwt.verify(token, config.secret) as T;
   } catch {
     return null;
   }
 }
 
-export function verifyRefreshToken(
-  token: string,
-  config: { secret: string },
-): RefreshTokenPayload | null {
-  try {
-    const payload = jwt.verify(token, config.secret) as RefreshTokenPayload;
-    if (payload.type !== "refresh") {
-      return null;
-    }
-    return payload;
-  } catch {
-    return null;
-  }
-}
-
-export function calculateRefreshTokenExpiry(expiresIn: string): Date {
+/**
+ *
+ * Convert an expiresIn string like `15m`, `1h`, `7d`, `30s` into a Date object for token expiry.
+ */
+export function expiresInToDate(expiresIn: string): Date {
   const now = new Date();
   const match = expiresIn.match(/^(\d+)([dhms])$/);
   if (!match) {
     throw new Error(`Invalid expiresIn format: ${expiresIn}`);
   }
 
-  const value = Number.parseInt(match[1], 10);
+  const value = Number.parseInt(match[1]!, 10);
   const unit = match[2];
 
   switch (unit) {
@@ -98,4 +57,35 @@ export function calculateRefreshTokenExpiry(expiresIn: string): Date {
     default:
       throw new Error(`Invalid expiresIn unit: ${unit}`);
   }
+}
+
+/**
+ * Convert an expiresIn string like `15m`, `1h`, `7d`, `30s` into seconds for cookie maxAge.
+ */
+export function expiresInToSeconds(expiresIn: string): number {
+  const match = expiresIn.match(/^(\d+)([dhms])$/);
+  if (!match) {
+    throw new Error(`Invalid expiresIn format: ${expiresIn}`);
+  }
+
+  const [, valueStr, unit] = match;
+  if (!valueStr || !unit) {
+    throw new Error(`Invalid expiresIn format: ${expiresIn}`);
+  }
+
+  const value = Number.parseInt(valueStr, 10);
+
+  const unitMultipliers: Record<string, number> = {
+    d: 86400,
+    h: 3600,
+    m: 60,
+    s: 1,
+  };
+
+  const multiplier = unitMultipliers[unit];
+  if (!multiplier) {
+    throw new Error(`Invalid expiresIn unit: ${unit}`);
+  }
+
+  return value * multiplier;
 }
