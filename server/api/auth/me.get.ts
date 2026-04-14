@@ -1,8 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@nuxthub/db";
 import { users } from "hub:db:schema";
-import type { ResponseCode } from "#shared/types";
-import { createResponse } from "#server/utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -10,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
     if (!userId) {
       return createResponse(
-        { code: "Unauthorized" as ResponseCode, message: "User not authenticated" },
+        { code: ApiResponseCode.Unauthorized, message: "User not authenticated" },
         null,
       );
     }
@@ -20,22 +18,28 @@ export default defineEventHandler(async (event) => {
     });
 
     if (!user) {
-      return createResponse({ code: "NotFound" as ResponseCode, message: "User not found" }, null);
+      return createResponse({ code: ApiResponseCode.NotFound, message: "User not found" }, null);
     }
 
     return createResponse(
-      { code: "Success" as ResponseCode, message: "User retrieved successfully" },
+      { code: ApiResponseCode.Success, message: "User retrieved successfully" },
       {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        balance: user.balance.toString(),
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          balance: user.balance,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        },
       },
     );
-  } catch (error) {
-    console.error("Get user error:", error);
+  } catch {
     return createResponse(
-      { code: "InternalError" as ResponseCode, message: "An error occurred while retrieving user" },
+      {
+        code: ApiResponseCode.InternalError,
+        message: "An error occurred while retrieving user",
+      },
       null,
     );
   }
