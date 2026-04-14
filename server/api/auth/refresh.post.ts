@@ -1,39 +1,31 @@
 import { eq, and, gt, isNull } from "drizzle-orm";
 import { db } from "@nuxthub/db";
 import { refreshTokens, users } from "hub:db:schema";
-import type { ResponseCode } from "#shared/types";
-import { createResponse } from "#server/utils/response";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  calculateRefreshTokenExpiry,
-  verifyRefreshToken,
-} from "#server/utils/auth";
 
 export default defineEventHandler(async (event) => {
   try {
-    const body = await readBody(event);
+    const token = getCookie(event, CookieName.RefreshToken);
 
-    if (!body?.refreshToken) {
+    if (!token) {
       return createResponse(
-        { code: "ValidationError" as ResponseCode, message: "Refresh token is required" },
+        { code: ApiResponseCode.ValidationError, message: "Refresh token is required" },
         null,
       );
     }
 
     const config = useRuntimeConfig();
-    const payload = verifyRefreshToken(body.refreshToken, config.jwt.refresh);
+    const payload = verifyToken(token, config.jwt.refresh);
 
     if (!payload) {
       return createResponse(
-        { code: "Unauthorized" as ResponseCode, message: "Invalid or expired refresh token" },
+        { code: ApiResponseCode.ValidationError, message: "Invalid or expired refresh token" },
         null,
       );
     }
 
     const storedToken = await db.query.refreshTokens.findFirst({
       where: and(
-        eq(refreshTokens.token, body.refreshToken),
+        eq(refreshTokens.token, token),
         gt(refreshTokens.expiresAt, new Date()),
         isNull(refreshTokens.revokedAt),
       ),
@@ -41,7 +33,7 @@ export default defineEventHandler(async (event) => {
 
     if (!storedToken) {
       return createResponse(
-        { code: "Unauthorized" as ResponseCode, message: "Refresh token not found or revoked" },
+        { code: ApiResponseCode.NotFound, message: "Refresh token not found or revoked" },
         null,
       );
     }
@@ -51,7 +43,7 @@ export default defineEventHandler(async (event) => {
     });
 
     if (!user) {
-      return createResponse({ code: "NotFound" as ResponseCode, message: "User not found" }, null);
+      return createResponse({ code: ApiResponseCode.NotFound, message: "User not found" }, null);
     }
 
     await db
@@ -59,27 +51,58 @@ export default defineEventHandler(async (event) => {
       .set({ revokedAt: new Date() })
       .where(eq(refreshTokens.id, storedToken.id));
 
-    const newAccessToken = generateAccessToken(
-      { id: user.id, email: user.email, name: user.name },
+    const newAccessToken = generateTokens(
+      { userId: user.id, email: user.email, name: user.name },
       config.jwt.access,
     );
-    const newRefreshToken = generateRefreshToken(user.id, config.jwt.refresh);
-    const newRefreshTokenExpiry = calculateRefreshTokenExpiry(config.jwt.refresh.expiresIn);
+    const newRefreshToken = generateTokens(
+      { userId: user.id, type: "refresh" },
+      config.jwt.refresh,
+    );
 
     await db.insert(refreshTokens).values({
       token: newRefreshToken,
       userId: user.id,
-      expiresAt: newRefreshTokenExpiry,
+      expiresAt: expiresInToDate(config.jwt.refresh.expiresIn),
+    });
+
+    const isProduction = process.env.NODE_ENV === "production";
+
+    setCookie(event, CookieName.AccessToken, newAccessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "lax",
+      path: "/",
+      maxAge: expiresInToSeconds(config.jwt.access.expiresIn),
+    });
+
+    setCookie(event, CookieName.RefreshToken, newRefreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "lax",
+      path: "/",
+      maxAge: expiresInToSeconds(config.jwt.refresh.expiresIn),
     });
 
     return createResponse(
-      { code: "Success" as ResponseCode, message: "Token refreshed successfully" },
-      { accessToken: newAccessToken, refreshToken: newRefreshToken },
+      { code: ApiResponseCode.Success, message: "Token refreshed successfully" },
+      {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          balance: user.balance,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        },
+      },
     );
-  } catch (error) {
-    console.error("Refresh token error:", error);
+  } catch {
     return createResponse(
-      { code: "InternalError" as ResponseCode, message: "An error occurred during token refresh" },
+      {
+        code: ApiResponseCode.InternalError,
+        message: "An error occurred during token refresh",
+      },
       null,
     );
   }

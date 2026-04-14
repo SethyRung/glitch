@@ -1,14 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@nuxthub/db";
 import { refreshTokens, users } from "hub:db:schema";
-import type { ResponseCode } from "#shared/types";
-import { createResponse } from "#server/utils/response";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  calculateRefreshTokenExpiry,
-  verifyPassword,
-} from "#server/utils/auth";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -16,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
     if (!body?.email || !body?.password) {
       return createResponse(
-        { code: "ValidationError" as ResponseCode, message: "Email and password are required" },
+        { code: ApiResponseCode.ValidationError, message: "Email and password are required" },
         null,
       );
     }
@@ -27,7 +19,7 @@ export default defineEventHandler(async (event) => {
 
     if (!user) {
       return createResponse(
-        { code: "Unauthorized" as ResponseCode, message: "Invalid email or password" },
+        { code: ApiResponseCode.Unauthorized, message: "Invalid email or password" },
         null,
       );
     }
@@ -36,33 +28,60 @@ export default defineEventHandler(async (event) => {
 
     if (!isValidPassword) {
       return createResponse(
-        { code: "Unauthorized" as ResponseCode, message: "Invalid email or password" },
+        { code: ApiResponseCode.Unauthorized, message: "Invalid email or password" },
         null,
       );
     }
 
     const config = useRuntimeConfig();
-    const accessToken = generateAccessToken(
-      { id: user.id, email: user.email, name: user.name, balance: user.balance.toString() },
+
+    const accessToken = generateTokens(
+      { userId: user.id, email: user.email, name: user.name },
       config.jwt.access,
     );
-    const refreshToken = generateRefreshToken(user.id, config.jwt.refresh);
-    const refreshTokenExpiry = calculateRefreshTokenExpiry(config.jwt.refresh.expiresIn);
+
+    const refreshToken = generateTokens({ userId: user.id, type: "refresh" }, config.jwt.refresh);
 
     await db.insert(refreshTokens).values({
-      token: refreshToken,
       userId: user.id,
-      expiresAt: refreshTokenExpiry,
+      token: refreshToken,
+      expiresAt: expiresInToDate(config.jwt.refresh.expiresIn),
+    });
+
+    const isProduction = process.env.NODE_ENV === "production";
+
+    setCookie(event, CookieName.AccessToken, accessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "lax",
+      path: "/",
+      maxAge: expiresInToSeconds(config.jwt.access.expiresIn),
+    });
+
+    setCookie(event, CookieName.RefreshToken, refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "lax",
+      path: "/",
+      maxAge: expiresInToSeconds(config.jwt.refresh.expiresIn),
     });
 
     return createResponse(
-      { code: "Success" as ResponseCode, message: "Login successful" },
-      { accessToken, refreshToken, user: { id: user.id, name: user.name, email: user.email } },
+      { code: ApiResponseCode.Success, message: "Login successful" },
+      {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          balance: user.balance,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        },
+      },
     );
-  } catch (error) {
-    console.error("Login error:", error);
+  } catch {
     return createResponse(
-      { code: "InternalError" as ResponseCode, message: "An error occurred during login" },
+      { code: ApiResponseCode.InternalError, message: "An error occurred during login" },
       null,
     );
   }
