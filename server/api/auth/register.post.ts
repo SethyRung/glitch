@@ -1,14 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@nuxthub/db";
 import { refreshTokens, users } from "hub:db:schema";
-import type { ResponseCode } from "#shared/types";
-import { createResponse } from "#server/utils/response";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  calculateRefreshTokenExpiry,
-  hashPassword,
-} from "#server/utils/auth";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -17,7 +9,7 @@ export default defineEventHandler(async (event) => {
     if (!body?.email || !body?.password || !body?.name) {
       return createResponse(
         {
-          code: "ValidationError" as ResponseCode,
+          code: ApiResponseCode.ValidationError,
           message: "Email, password, and name are required",
         },
         null,
@@ -30,7 +22,7 @@ export default defineEventHandler(async (event) => {
 
     if (existingUser) {
       return createResponse(
-        { code: "ValidationError" as ResponseCode, message: "Email already registered" },
+        { code: ApiResponseCode.ValidationError, message: "Email already registered" },
         null,
       );
     }
@@ -49,42 +41,63 @@ export default defineEventHandler(async (event) => {
 
     if (!newUser || newUser.length === 0) {
       return createResponse(
-        { code: "InternalError" as ResponseCode, message: "Failed to create user" },
+        { code: ApiResponseCode.InternalError, message: "Failed to create user" },
         null,
       );
     }
 
     const config = useRuntimeConfig();
-    const accessToken = generateAccessToken(
-      {
-        id: newUser[0]!.id,
-        email: newUser[0]!.email,
-        name: newUser[0]!.name,
-        balance: newUser[0]!.balance.toString(),
-      },
+
+    const accessToken = generateTokens(
+      { userId: newUser[0]!.id, email: newUser[0]!.email, name: newUser[0]!.name },
       config.jwt.access,
     );
-    const refreshToken = generateRefreshToken(newUser[0]!.id, config.jwt.refresh);
-    const refreshTokenExpiry = calculateRefreshTokenExpiry(config.jwt.refresh.expiresIn);
+
+    const refreshToken = generateTokens(
+      { userId: newUser[0]!.id, type: "refresh" },
+      config.jwt.refresh,
+    );
 
     await db.insert(refreshTokens).values({
-      token: refreshToken,
       userId: newUser[0]!.id,
-      expiresAt: refreshTokenExpiry,
+      token: refreshToken,
+      expiresAt: expiresInToDate(config.jwt.refresh.expiresIn),
+    });
+
+    const isProduction = process.env.NODE_ENV === "production";
+
+    setCookie(event, CookieName.AccessToken, accessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "lax",
+      path: "/",
+      maxAge: expiresInToSeconds(config.jwt.access.expiresIn),
+    });
+
+    setCookie(event, CookieName.RefreshToken, refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "lax",
+      path: "/",
+      maxAge: expiresInToSeconds(config.jwt.refresh.expiresIn),
     });
 
     return createResponse(
-      { code: "Success" as ResponseCode, message: "Registration successful" },
+      { code: ApiResponseCode.Success, message: "Registration successful" },
       {
-        accessToken,
-        refreshToken,
-        user: { id: newUser[0]!.id, name: newUser[0]!.name, email: newUser[0]!.email },
+        user: {
+          id: newUser[0]!.id,
+          email: newUser[0]!.email,
+          name: newUser[0]!.name,
+          balance: newUser[0]!.balance,
+          createdAt: newUser[0]!.createdAt,
+          updatedAt: newUser[0]!.updatedAt,
+        },
       },
     );
-  } catch (error) {
-    console.error("Registration error:", error);
+  } catch {
     return createResponse(
-      { code: "InternalError" as ResponseCode, message: "An error occurred during registration" },
+      { code: ApiResponseCode.InternalError, message: "An error occurred during registration" },
       null,
     );
   }
