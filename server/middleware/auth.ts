@@ -1,45 +1,38 @@
 import type { H3Event } from "h3";
 
-const PUBLIC_ROUTES: {
-  path: string;
-  methods: string[];
-}[] = [
-  { path: "/api/auth/login", methods: ["POST"] },
-  { path: "/api/auth/register", methods: ["POST"] },
-  { path: "/api/auth/refresh", methods: ["POST"] },
-  { path: "/api/games", methods: ["GET"] },
-  { path: "/api/games/[id]", methods: ["GET"] },
+const PUBLIC_ROUTES: { pattern: RegExp; methods: string[] }[] = [
+  { pattern: /^\/api\/auth\/login$/, methods: ["POST"] },
+  { pattern: /^\/api\/auth\/register$/, methods: ["POST"] },
+  { pattern: /^\/api\/auth\/refresh$/, methods: ["POST"] },
+  { pattern: /^\/api\/games$/, methods: ["GET"] },
+  { pattern: /^\/api\/games\/[^/]+$/, methods: ["GET"] },
 ];
 
-function matchesPublicRoute(path: string, routePath: string): boolean {
-  if (routePath.startsWith("^")) {
-    const regex = new RegExp(routePath.replace("^", ""));
-    return regex.test(path);
-  }
-  return path === routePath;
+function isPublicRoute(path: string, method: string | undefined): boolean {
+  return PUBLIC_ROUTES.some(
+    (route) => route.pattern.test(path) && (!method || route.methods.includes(method)),
+  );
 }
 
-function findPublicRoute(path: string, method: string | undefined): boolean {
-  return PUBLIC_ROUTES.some(
-    (route) =>
-      matchesPublicRoute(path, route.path) &&
-      (!route.methods.length || (method && route.methods.includes(method))),
-  );
+function extractToken(event: H3Event): string | undefined {
+  const cookie = getCookie(event, CookieName.AccessToken);
+  if (cookie) return cookie;
+
+  const auth = getHeader(event, "authorization");
+  if (auth?.startsWith("Bearer ")) {
+    return auth.slice(7);
+  }
+
+  return undefined;
 }
 
 export default defineEventHandler((event: H3Event) => {
   const url = getRequestURL(event).pathname;
 
-  // Skip non-API routes
-  if (!url.startsWith("/api/")) {
+  if (!url.startsWith("/api/") || url.startsWith("/api/_") || isPublicRoute(url, event.method))
     return;
-  }
 
-  if (findPublicRoute(url, event.method)) {
-    return;
-  }
-
-  const token = getCookie(event, CookieName.AccessToken);
+  const token = extractToken(event);
 
   if (!token) {
     return createResponse(
@@ -58,7 +51,6 @@ export default defineEventHandler((event: H3Event) => {
     );
   }
 
-  // Attach user to event context
   event.context.user = payload;
 });
 
