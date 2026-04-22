@@ -24,14 +24,12 @@ export default defineEventHandler(async (event) => {
     return createResponse(
       { code: ApiResponseCode.Success, message: "User retrieved successfully" },
       {
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          balance: user.balance,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-        },
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        balance: user.balance,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       },
     );
   } catch {

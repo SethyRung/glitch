@@ -1,7 +1,11 @@
-<script lang="ts" setup></script>
-
 <template>
   <div>
-    <slot></slot>
+    <AppHeader />
+
+    <UMain>
+      <NuxtPage />
+    </UMain>
+
+    <AppFooter />
   </div>
 </template>
