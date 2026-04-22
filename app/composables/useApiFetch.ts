@@ -1,3 +1,6 @@
+let isRefreshing = false;
+let refreshPromise: Promise<boolean> | null = null;
+
 export const useApiFetch = createUseFetch((options) => {
   const config = useRuntimeConfig();
   const REFRESH_TOKEN_ENDPOINT = "/api/auth/refresh";
@@ -7,40 +10,46 @@ export const useApiFetch = createUseFetch((options) => {
     timeout: 10000,
     server: false,
     onResponse: async (context) => {
-      if (context.response.ok) {
-        const data = context.response._data as ApiResponse<unknown>;
-        if (data.status.code === ApiResponseCode.Unauthorized) {
-          const refreshTokenRes = await $fetch.raw(REFRESH_TOKEN_ENDPOINT, {
-            baseURL: config.public.baseURL,
-            method: "POST",
-            headers: {
-              cookie: context.options.headers.get("cookie") || "",
-            },
-          });
+      if (!context.response.ok) return;
 
-          if (
-            !refreshTokenRes._data ||
-            refreshTokenRes._data.status.code !== ApiResponseCode.Success
-          ) {
-            return;
-          }
+      const data = context.response._data as ApiResponse<unknown>;
+      if (data?.status?.code !== ApiResponseCode.Unauthorized) return;
 
-          const refreshCookies = refreshTokenRes.headers.getSetCookie();
+      if (isRefreshing && refreshPromise) {
+        const success = await refreshPromise;
+        if (!success) return;
 
-          const cookie = refreshCookies.join("; ");
-          const repeatOptions = {
-            ...context.options,
-            onResponse: undefined,
-            headers: {
-              ...context.options.headers,
-              cookie,
-            },
-          };
-
-          const repeatRes = await $fetch.raw(context.request, repeatOptions as any);
-          context.response._data = repeatRes._data;
-        }
+        const repeatRes = await $fetch.raw(context.request, {
+          ...context.options,
+          onResponse: undefined,
+          method: context.options.method as any,
+        });
+        context.response._data = repeatRes._data;
+        return;
       }
+
+      isRefreshing = true;
+      refreshPromise = $fetch
+        .raw(REFRESH_TOKEN_ENDPOINT, {
+          baseURL: config.public.baseURL,
+          method: "POST",
+          timeout: 10000,
+        })
+        .then((res) => res._data?.status?.code === ApiResponseCode.Success)
+        .catch(() => false);
+
+      const success = await refreshPromise;
+      isRefreshing = false;
+      refreshPromise = null;
+
+      if (!success) return;
+
+      const repeatRes = await $fetch.raw(context.request, {
+        ...context.options,
+        onResponse: undefined,
+        method: context.options.method as any,
+      });
+      context.response._data = repeatRes._data;
     },
     ...options,
   };
