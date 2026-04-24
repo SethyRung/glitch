@@ -1,8 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@nuxthub/db";
 import { games } from "hub:db:schema";
-import type { ResponseCode } from "#shared/types";
-import { createResponse } from "#server/utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -10,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
     if (!id) {
       return createResponse(
-        { code: "InvalidRequest" as ResponseCode, message: "Game ID is required" },
+        { code: ApiResponseCode.InvalidRequest, message: "Game ID is required" },
         null,
       );
     }
@@ -20,14 +18,11 @@ export default defineEventHandler(async (event) => {
     });
 
     if (!game) {
-      return createResponse(
-        { code: "NotFound" as ResponseCode, message: "Game not found" },
-        null,
-      );
+      return createResponse({ code: ApiResponseCode.NotFound, message: "Game not found" }, null);
     }
 
     return createResponse(
-      { code: "Success" as ResponseCode, message: "Game retrieved successfully" },
+      { code: ApiResponseCode.Success, message: "Game retrieved successfully" },
       {
         id: game.id,
         name: game.name,
@@ -44,7 +39,7 @@ export default defineEventHandler(async (event) => {
     console.error("Get game error:", error);
     return createResponse(
       {
-        code: "InternalError" as ResponseCode,
+        code: ApiResponseCode.InternalError,
         message: "An error occurred while retrieving game",
       },
       null,

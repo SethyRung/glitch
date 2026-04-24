@@ -1,8 +1,6 @@
 import { and, count as countFn, desc, eq, ilike, or } from "drizzle-orm";
 import { db } from "@nuxthub/db";
 import { games } from "hub:db:schema";
-import type { ResponseCode } from "#shared/types";
-import { createResponse } from "#server/utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -42,7 +40,7 @@ export default defineEventHandler(async (event) => {
     });
 
     return createResponse(
-      { code: "Success" as ResponseCode, message: "Games retrieved successfully" },
+      { code: ApiResponseCode.Success, message: "Games retrieved successfully" },
       gameList.map((game) => ({
         id: game.id,
         name: game.name,
@@ -60,7 +58,7 @@ export default defineEventHandler(async (event) => {
     console.error("Get games error:", error);
     return createResponse(
       {
-        code: "InternalError" as ResponseCode,
+        code: ApiResponseCode.InternalError,
         message: "An error occurred while retrieving games",
       },
       null,

@@ -1,8 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "@nuxthub/db";
 import { purchases } from "hub:db:schema";
-import type { ResponseCode } from "#shared/types";
-import { createResponse } from "#server/utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -10,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
     if (!userId) {
       return createResponse(
-        { code: "Unauthorized" as ResponseCode, message: "User not authenticated" },
+        { code: ApiResponseCode.Unauthorized, message: "User not authenticated" },
         null,
       );
     }
@@ -19,7 +17,7 @@ export default defineEventHandler(async (event) => {
 
     if (!id) {
       return createResponse(
-        { code: "InvalidRequest" as ResponseCode, message: "Purchase ID is required" },
+        { code: ApiResponseCode.InvalidRequest, message: "Purchase ID is required" },
         null,
       );
     }
@@ -41,13 +39,13 @@ export default defineEventHandler(async (event) => {
 
     if (!purchase) {
       return createResponse(
-        { code: "NotFound" as ResponseCode, message: "Purchase not found" },
+        { code: ApiResponseCode.NotFound, message: "Purchase not found" },
         null,
       );
     }
 
     return createResponse(
-      { code: "Success" as ResponseCode, message: "Purchase retrieved successfully" },
+      { code: ApiResponseCode.Success, message: "Purchase retrieved successfully" },
       {
         id: purchase.id,
         userId: purchase.userId,
@@ -73,7 +71,7 @@ export default defineEventHandler(async (event) => {
     console.error("Get purchase error:", error);
     return createResponse(
       {
-        code: "InternalError" as ResponseCode,
+        code: ApiResponseCode.InternalError,
         message: "An error occurred while retrieving purchase",
       },
       null,

@@ -58,15 +58,11 @@ export default defineEventHandler(async (event) => {
         userId: purchase.userId,
         gameId: purchase.gameId,
         gameName:
-          purchase.game &&
-          typeof purchase.game === "object" &&
-          "name" in purchase.game
+          purchase.game && typeof purchase.game === "object" && "name" in purchase.game
             ? (purchase.game as { name: string }).name
             : null,
         gameImageUrl:
-          purchase.game &&
-          typeof purchase.game === "object" &&
-          "imageUrl" in purchase.game
+          purchase.game && typeof purchase.game === "object" && "imageUrl" in purchase.game
             ? (purchase.game as { imageUrl: string | null }).imageUrl
             : null,
         amount: purchase.amount.toString(),
