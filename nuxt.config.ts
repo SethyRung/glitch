@@ -5,7 +5,7 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   compatibilityDate: "2026-03-01",
-  css: ["~/assets/css/main.css"],
+  css: ["./app/assets/css/main.css"],
   modules: ["@nuxt/ui", "@nuxthub/core", "@pinia/nuxt", "@vueuse/nuxt"],
   vite: {
     plugins: [tailwindcss()],
