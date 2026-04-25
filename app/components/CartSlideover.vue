@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 const cart = useCartStore();
-const isOpen = defineModel<boolean>("open", { default: false });
 </script>
 
 <template>
-  <USlideover v-model:open="isOpen" title="Your Cart" side="right">
+  <USlideover title="Your Cart" side="right">
     <slot></slot>
 
     <template #body>
@@ -14,7 +13,7 @@ const isOpen = defineModel<boolean>("open", { default: false });
       >
         <UIcon name="i-lucide-shopping-cart" class="size-12" />
         <p>Your cart is empty</p>
-        <UButton label="Browse store" to="/" @click="isOpen = false" />
+        <UButton label="Browse store" to="/" />
       </div>
 
       <div v-else class="space-y-4">
