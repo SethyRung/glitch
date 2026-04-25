@@ -24,13 +24,8 @@ export default defineEventHandler(async (event) => {
     return createResponse(
       { code: ApiResponseCode.Success, message: "Game retrieved successfully" },
       {
-        id: game.id,
-        name: game.name,
-        description: game.description,
+        ...game,
         price: game.price.toString(),
-        imageUrl: game.imageUrl,
-        category: game.category,
-        stock: game.stock,
         createdAt: game.createdAt?.toISOString() ?? null,
         updatedAt: game.updatedAt?.toISOString() ?? null,
       },
