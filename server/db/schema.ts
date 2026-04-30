@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   boolean,
   date,
@@ -94,3 +95,30 @@ export const refreshTokens = pgTable(
     index("idx_refresh_tokens_revoked_at").on(table.revokedAt),
   ],
 );
+
+export const usersRelations = relations(users, ({ many }) => ({
+  purchases: many(purchases),
+  refreshTokens: many(refreshTokens),
+}));
+
+export const gamesRelations = relations(games, ({ many }) => ({
+  purchases: many(purchases),
+}));
+
+export const purchasesRelations = relations(purchases, ({ one }) => ({
+  user: one(users, {
+    fields: [purchases.userId],
+    references: [users.id],
+  }),
+  game: one(games, {
+    fields: [purchases.gameId],
+    references: [games.id],
+  }),
+}));
+
+export const refreshTokensRelations = relations(refreshTokens, ({ one }) => ({
+  user: one(users, {
+    fields: [refreshTokens.userId],
+    references: [users.id],
+  }),
+}));

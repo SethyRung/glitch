@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
   } catch {
     return createResponse(
       { code: ApiResponseCode.InternalError, message: "An error occurred" },
-      false,
+      null,
     );
   }
 });

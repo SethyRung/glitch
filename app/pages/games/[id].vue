@@ -5,7 +5,7 @@ const route = useRoute();
 const cart = useCartStore();
 const toast = useToast();
 
-const { data, status } = await useApiFetch(`/api/games/${route.params.id}`);
+const { data, status } = await useFetchApi(`/api/games/${route.params.id}`);
 
 const game = computed<Game | null>(() => data.value?.data ?? null);
 const isLoading = computed(() => status.value === "pending");

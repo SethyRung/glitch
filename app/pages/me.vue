@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-const { data } = await useApiFetch("/api/auth/me");
-
-const user = computed(() => data.value?.data);
+const user = useUser();
 </script>
 
 <template>

@@ -5,7 +5,7 @@ const category = ref();
 const page = ref(1);
 const limit = 20;
 
-const { data, pending } = await useApiFetch("/api/games", {
+const { data, pending } = await useFetchApi("/api/games", {
   query: {
     search: search.value,
     category: category.value,
@@ -15,8 +15,8 @@ const { data, pending } = await useApiFetch("/api/games", {
   watch: [search, category],
 });
 
-const games = computed(() => data.value?.data ?? []);
-const total = computed(() => data.value?.meta?.total ?? 0);
+const games = computed(() => (data.value && isSuccessResponse(data.value) ? data.value.data : []) ?? []);
+const total = computed(() => (data.value && isSuccessResponse(data.value) ? data.value.meta?.total : 0) ?? 0);
 
 const categories = computed(() => {
   const set = new Set(games.value.map((g) => g.category).filter(Boolean));

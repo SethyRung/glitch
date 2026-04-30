@@ -1,13 +1,11 @@
 <script lang="ts" setup>
 definePageMeta({ layout: "auth" });
 
-const router = useRouter();
-
-const { data, pending } = await useApiFetch("/api/auth/check");
+const user = useUser();
 
 watchEffect(() => {
-  if (!pending.value && data.value?.status.code === ApiResponseCode.Success && data.value?.data) {
-    router.back();
+  if (user.value) {
+    navigateTo("/");
   }
 });
 

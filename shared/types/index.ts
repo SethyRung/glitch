@@ -1,13 +1,9 @@
 import type { games, purchases, refreshTokens, users } from "hub:db:schema";
 
-type DateFields<T, K extends keyof T> = Omit<T, K> & {
-  [P in K]: string | null;
-};
-
-export type User = DateFields<typeof users.$inferSelect, "createdAt" | "updatedAt">;
-export type Game = DateFields<typeof games.$inferSelect, "createdAt" | "updatedAt">;
-export type Purchase = DateFields<typeof purchases.$inferSelect, "createdAt" | "updatedAt">;
-export type RefreshToken = DateFields<
+export type User = Omit<typeof users.$inferSelect, "passwordHash" | "createdAt" | "updatedAt">;
+export type Game = Omit<typeof games.$inferSelect, "createdAt" | "updatedAt">;
+export type Purchase = Omit<typeof purchases.$inferSelect, "createdAt" | "updatedAt">;
+export type RefreshToken = Omit<
   typeof refreshTokens.$inferSelect,
   "createdAt" | "expiresAt" | "revokedAt"
 >;
@@ -23,19 +19,28 @@ export enum ApiResponseCode {
   InternalError = "INTERNAL_ERROR",
 }
 
-export interface ApiResponse<T> {
-  status: {
-    code: ApiResponseCode;
-    message: string;
-    requestId: string;
-    requestTime: number;
-  };
+export interface ApiResponseStatus {
+  code: ApiResponseCode;
+  message: string;
+  requestId: string;
+  requestTime: number;
+}
+
+export type ApiResponseSuccess<T> = {
+  status: ApiResponseStatus & { code: ApiResponseCode.Success };
   data: T;
-  meta?: {
-    total: number;
-    limit: number;
-    offset: number;
-  };
+  meta?: { total: number; limit: number; offset: number };
+};
+
+export type ApiResponseError = {
+  status: ApiResponseStatus & { code: Exclude<ApiResponseCode, ApiResponseCode.Success> };
+  data: null;
+};
+
+export type ApiResponse<T> = ApiResponseSuccess<T> | ApiResponseError;
+
+export function isSuccessResponse<T>(res: ApiResponse<T>): res is ApiResponseSuccess<T> {
+  return res.status.code === ApiResponseCode.Success;
 }
 
 export enum CookieName {

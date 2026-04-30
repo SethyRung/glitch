@@ -17,6 +17,7 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Partial<Schema>>({ name: "", email: "", password: "" });
 
+const user = useUser();
 const loading = ref(false);
 
 async function onSubmit() {
@@ -28,7 +29,8 @@ async function onSubmit() {
       body: toRaw(state),
     });
 
-    if (res.status.code === ApiResponseCode.Success) {
+    if (isSuccessResponse(res)) {
+      user.value = res.data;
       toast.add({ title: "Account created!", color: "success", icon: "i-lucide:circle-check" });
       router.push(redirect.value);
     } else {

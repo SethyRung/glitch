@@ -1,8 +1,6 @@
 import { and, count as countFn, desc, eq } from "drizzle-orm";
 import { db } from "@nuxthub/db";
 import { purchases } from "hub:db:schema";
-import type { ResponseCode } from "#shared/types";
-import { createResponse } from "#server/utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -10,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
     if (!userId) {
       return createResponse(
-        { code: "Unauthorized" as ResponseCode, message: "User not authenticated" },
+        { code: ApiResponseCode.Unauthorized, message: "User not authenticated" },
         null,
       );
     }
@@ -52,33 +50,19 @@ export default defineEventHandler(async (event) => {
     });
 
     return createResponse(
-      { code: "Success" as ResponseCode, message: "Purchases retrieved successfully" },
+      { code: ApiResponseCode.Success, message: "Purchases retrieved successfully" },
       purchaseList.map((purchase) => ({
-        id: purchase.id,
-        userId: purchase.userId,
-        gameId: purchase.gameId,
-        gameName:
-          purchase.game && typeof purchase.game === "object" && "name" in purchase.game
-            ? (purchase.game as { name: string }).name
-            : null,
-        gameImageUrl:
-          purchase.game && typeof purchase.game === "object" && "imageUrl" in purchase.game
-            ? (purchase.game as { imageUrl: string | null }).imageUrl
-            : null,
+        ...purchase,
         amount: purchase.amount.toString(),
-        quantity: purchase.quantity,
-        status: purchase.status,
-        merchantReference: purchase.merchantReference,
         createdAt: purchase.createdAt?.toISOString() ?? null,
         updatedAt: purchase.updatedAt?.toISOString() ?? null,
-      })) as unknown[],
+      })),
       { total: Number(count), limit: validLimit, offset: validOffset },
     );
-  } catch (error) {
-    console.error("Get purchases error:", error);
+  } catch {
     return createResponse(
       {
-        code: "InternalError" as ResponseCode,
+        code: ApiResponseCode.InternalError,
         message: "An error occurred while retrieving purchases",
       },
       null,

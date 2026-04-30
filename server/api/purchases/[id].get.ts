@@ -52,11 +52,11 @@ export default defineEventHandler(async (event) => {
         gameId: purchase.gameId,
         game: purchase.game
           ? {
-              id: (purchase.game as { id: string }).id,
-              name: (purchase.game as { name: string }).name,
-              description: (purchase.game as { description: string | null }).description,
-              imageUrl: (purchase.game as { imageUrl: string | null }).imageUrl,
-              category: (purchase.game as { category: string | null }).category,
+              id: purchase.game.id,
+              name: purchase.game.name,
+              description: purchase.game.description,
+              imageUrl: purchase.game.imageUrl,
+              category: purchase.game.category,
             }
           : null,
         amount: purchase.amount.toString(),

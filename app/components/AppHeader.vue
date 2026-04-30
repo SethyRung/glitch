@@ -1,18 +1,17 @@
 <script lang="ts" setup>
 const cart = useCartStore();
+const user = useUser();
 
 const navItems = computed(() => [
   { label: "Store", to: "/", icon: "i-lucide-store" },
   { label: "Purchases", to: "/purchases", icon: "i-lucide-receipt" },
 ]);
 
-const { data } = await useApiFetch("/api/auth/me");
-const user = computed(() => data.value?.data);
-
 async function logout() {
-  const res = await $fetch("/api/auth/logout", { method: "POST", credentials: "include" });
-  if (res.status.code === ApiResponseCode.Success) {
-    window.location.reload();
+  const res = await useApi("/api/auth/logout", { method: "POST" });
+  if (isSuccessResponse(res)) {
+    user.value = null;
+    await navigateTo("/");
   }
 }
 

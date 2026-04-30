@@ -47,19 +47,17 @@ export default defineEventHandler(async (event) => {
     }
 
     const config = useRuntimeConfig();
+    const user = newUser[0]!;
 
     const accessToken = generateTokens(
-      { userId: newUser[0]!.id, email: newUser[0]!.email, name: newUser[0]!.name },
+      { userId: user.id, email: user.email, name: user.name },
       config.jwt.access,
     );
 
-    const refreshToken = generateTokens(
-      { userId: newUser[0]!.id, type: "refresh" },
-      config.jwt.refresh,
-    );
+    const refreshToken = generateTokens({ userId: user.id, type: "refresh" }, config.jwt.refresh);
 
     await db.insert(refreshTokens).values({
-      userId: newUser[0]!.id,
+      userId: user.id,
       token: refreshToken,
       expiresAt: expiresInToDate(config.jwt.refresh.expiresIn),
     });
@@ -85,14 +83,10 @@ export default defineEventHandler(async (event) => {
     return createResponse(
       { code: ApiResponseCode.Success, message: "Registration successful" },
       {
-        user: {
-          id: newUser[0]!.id,
-          email: newUser[0]!.email,
-          name: newUser[0]!.name,
-          balance: newUser[0]!.balance,
-          createdAt: newUser[0]!.createdAt,
-          updatedAt: newUser[0]!.updatedAt,
-        },
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        balance: user.balance,
       },
     );
   } catch {

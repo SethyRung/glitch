@@ -1,6 +1,15 @@
 export function createResponse<T>(
-  status: { code: ApiResponseCode; message?: string },
+  status: { code: ApiResponseCode.Success; message?: string },
   data: T,
+  meta?: { total: number; limit: number; offset: number },
+): ApiResponse<T>;
+export function createResponse(
+  status: { code: Exclude<ApiResponseCode, ApiResponseCode.Success>; message?: string },
+  data?: null,
+): ApiResponse<never>;
+export function createResponse<T>(
+  status: { code: ApiResponseCode; message?: string },
+  data?: T | null,
   meta?: { total: number; limit: number; offset: number },
 ): ApiResponse<T> {
   return {
@@ -10,7 +19,7 @@ export function createResponse<T>(
       requestId: crypto.randomUUID(),
       requestTime: Date.now(),
     },
-    data,
+    data: data ?? null,
     meta,
-  };
+  } as ApiResponse<T>;
 }
