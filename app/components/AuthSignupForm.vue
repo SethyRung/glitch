@@ -24,7 +24,7 @@ async function onSubmit() {
   try {
     loading.value = true;
 
-    const res = await $fetch("/api/auth/register", {
+    const res = await useApi("/api/auth/register", {
       method: "post",
       body: toRaw(state),
     });

@@ -23,7 +23,7 @@ async function onSubmit() {
   try {
     loading.value = true;
 
-    const res = await $fetch("/api/auth/login", {
+    const res = await useApi("/api/auth/login", {
       method: "post",
       body: toRaw(state),
     });
