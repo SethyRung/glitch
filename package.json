@@ -40,6 +40,7 @@
     "@iconify-json/lucide": "^1.2.116",
     "drizzle-kit": "^0.31.10",
     "oxfmt": "^0.46.0",
-    "oxlint": "^1.72.0"
+    "oxlint": "^1.72.0",
+    "vue-tsc": "^3.3.6"
   }
 }
