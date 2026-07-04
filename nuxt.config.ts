@@ -10,7 +10,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
-      include: [],
+      include: ["better-auth/client/plugins"],
     },
   },
 
@@ -48,6 +48,8 @@ export default defineNuxtConfig({
     "/account/**": { auth: "user" },
     "/login": { auth: "guest" },
     "/register": { auth: "guest" },
+    "/forgot-password": { auth: "guest" },
+    "/reset-password": { auth: "guest" },
     "/checkout/**": { auth: "user" },
   },
 

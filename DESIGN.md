@@ -208,7 +208,7 @@ back to raw tokens when the spec is explicit.
   blocks, `bg-elevated` for chips and pills that float over cards.
 - **Border / ring** — `border-default` / `ring-default` resolves to
   `--ui-border` (~zinc-200 light / zinc-800 dark). Use `ring-1
-  ring-default` on cards; reserve `border-default` for table-like rows
+ring-default` on cards; reserve `border-default` for table-like rows
   or dividers (e.g. the cart line items' `divide-y divide-default`).
 - **Brand color** — `text-primary`, `bg-primary`, `ring-primary`,
   `border-primary` all derive from `--ui-primary`, which is
@@ -406,7 +406,7 @@ exact integers, to keep the rhythm.
   mono, prefixed by an `arrow-up-right` icon in `text-primary`. Lists
   platforms and tags inside a game detail page, never standalone.
 - **Answer block:** `bg-default` + `ring ring-default` + `divide-y
-  divide-default`. Question row on the muted surface, answer row on
+divide-default`. Question row on the muted surface, answer row on
   default, source-chip row at the bottom.
 - **Button primary:** `UButton` with default `color="primary"` (solid
   violet, white label). Hover deepens to `bg-primary-deep` (Violet 700).

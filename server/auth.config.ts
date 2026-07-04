@@ -6,6 +6,9 @@ export default defineServerAuth({
     enabled: true,
     minPasswordLength: 8,
     autoSignIn: true,
+    sendResetPassword: async ({ user, url }) => {
+      console.log(`[auth] Password reset requested for ${user.email}: ${url}`);
+    },
   },
   plugins: [
     admin({
