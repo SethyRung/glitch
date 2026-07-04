@@ -1,42 +1,48 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
-  future: {
-    compatibilityVersion: 4,
-  },
   compatibilityDate: "2026-03-01",
-  css: ["./app/assets/css/main.css"],
-  modules: ["@nuxt/ui", "@nuxthub/core", "@pinia/nuxt", "@vueuse/nuxt"],
+  devtools: { enabled: true },
+  css: ["~/assets/css/main.css"],
+
+  modules: ["@nuxt/ui", "@nuxthub/core", "@vueuse/nuxt", "@onmax/nuxt-better-auth"],
+
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
-      include: ["zod"],
+      include: [],
     },
   },
+
   runtimeConfig: {
-    jwt: {
-      access: {
-        secret: "",
-        expiresIn: "",
-      },
-      refresh: {
-        secret: "",
-        expiresIn: "",
-      },
-    },
     public: {
-      baseURL: "",
+      siteUrl: "",
     },
   },
+
   hub: {
     db: {
       dialect: "postgresql",
-      driver: process.env.DATABASE_DRIVER as "postgres-js" | "neon-http",
+      driver: process.env.DATABASE_DRIVER as any,
     },
+    kv: true,
   },
+
+  auth: {
+    hubSecondaryStorage: true,
+  },
+
   nitro: {
     experimental: {
       tasks: true,
     },
+  },
+
+  fonts: {
+    families: [
+      { name: "Geist", provider: "local" },
+      { name: "Geist Mono", provider: "local" },
+      { name: "Geist Pixel", provider: "local" },
+    ],
   },
 });

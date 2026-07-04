@@ -1,11 +1,5 @@
 <template>
   <div>
-    <AppHeader />
-
-    <UMain>
-      <NuxtPage />
-    </UMain>
-
-    <AppFooter />
+    <slot />
   </div>
 </template>

@@ -1,3 +1,5 @@
+import type { ApiResponse } from "#shared/types";
+
 export function createResponse<T>(
   status: { code: ApiResponseCode.Success; message?: string },
   data: T,
