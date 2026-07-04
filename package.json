@@ -28,10 +28,12 @@
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.2",
     "drizzle-zod": "^0.8.3",
+    "ioredis": "^5.11.1",
     "nuxt": "^4.4.8",
     "postgres": "^3.4.9",
     "tailwindcss": "^4.3.1",
     "typescript": "^6.0.3",
+    "unstorage": "^1.17.5",
     "vue": "^3.5.38",
     "vue-router": "^5.1.0",
     "zod": "^4.4.3"
