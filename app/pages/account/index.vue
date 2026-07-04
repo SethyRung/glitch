@@ -89,7 +89,7 @@ async function saveProfile() {
         <template #header>
           <div class="flex items-start gap-4">
             <div
-              class="size-14 rounded-full bg-primary text-inverted flex items-center justify-center text-2xl font-semibold"
+              class="shrink-0 size-14 rounded-full bg-primary text-inverted flex items-center justify-center text-2xl font-semibold"
             >
               {{ initial }}
             </div>
