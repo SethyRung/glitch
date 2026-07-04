@@ -6,12 +6,19 @@
 
 import type { games } from "#server/db/schema";
 
+export const DEMO_ADMIN = {
+  email: "admin@easyshop.com",
+  password: "password123",
+  name: "Demo Admin",
+  role: "admin",
+} as const;
+
 export const DEMO_USER = {
   email: "demo@easyshop.com",
   password: "password123",
   name: "Demo User",
-  balance: "100.00",
-};
+  role: "user",
+} as const;
 
 export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
   {
@@ -26,14 +33,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "FromSoftware",
     publisher: "Bandai Namco Entertainment",
     releaseDate: "2022-02-25",
-    tags: '["Dark Fantasy", "Open World", "Souls-like", "RPG", "Difficult"]',
+    tags: ["Dark Fantasy", "Open World", "Souls-like", "RPG", "Difficult"],
     metacriticScore: 96,
     positiveReviews: 354821,
     negativeReviews: 12543,
-    platforms: '["windows"]',
+    platforms: ["windows"],
     videoUrl: "https://www.youtube.com/embed/QH2-TGUlwu4",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/ss_2.jpg",
+    ],
   },
   {
     name: "Baldur's Gate 3",
@@ -46,14 +55,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "Larian Studios",
     publisher: "Larian Studios",
     releaseDate: "2023-08-03",
-    tags: '["RPG", "Turn-based", "Co-op", "Fantasy", "Story Rich"]',
+    tags: ["RPG", "Turn-based", "Co-op", "Fantasy", "Story Rich"],
     metacriticScore: 96,
     positiveReviews: 482156,
     negativeReviews: 8723,
-    platforms: '["windows", "mac"]',
+    platforms: ["windows", "mac"],
     videoUrl: "https://www.youtube.com/embed/1eq4lR6N4qg",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/ss_2.jpg",
+    ],
   },
   {
     name: "Cyberpunk 2077: Phantom Liberty",
@@ -68,14 +79,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "CD PROJEKT RED",
     publisher: "CD PROJEKT RED",
     releaseDate: "2023-09-26",
-    tags: '["Open World", "Cyberpunk", "Sci-Fi", "Action RPG", "Story Rich"]',
+    tags: ["Open World", "Cyberpunk", "Sci-Fi", "Action RPG", "Story Rich"],
     metacriticScore: 86,
     positiveReviews: 412345,
     negativeReviews: 89234,
-    platforms: '["windows"]',
+    platforms: ["windows"],
     videoUrl: "https://www.youtube.com/embed/8X2kIfS6fb8",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/ss_2.jpg",
+    ],
   },
   {
     name: "Stardew Valley",
@@ -88,14 +101,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "ConcernedApe",
     publisher: "ConcernedApe",
     releaseDate: "2016-02-26",
-    tags: '["Farming", "Life Sim", "Co-op", "Relaxing", "Pixel Graphics"]',
+    tags: ["Farming", "Life Sim", "Co-op", "Relaxing", "Pixel Graphics"],
     metacriticScore: 93,
     positiveReviews: 389456,
     negativeReviews: 6234,
-    platforms: '["windows", "mac", "linux"]',
+    platforms: ["windows", "mac", "linux"],
     videoUrl: "https://www.youtube.com/embed/OF2C6jotlfc",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/413150/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/413150/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/413150/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/413150/ss_2.jpg",
+    ],
   },
   {
     name: "Hollow Knight",
@@ -108,14 +123,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "Team Cherry",
     publisher: "Team Cherry",
     releaseDate: "2017-02-24",
-    tags: '["Metroidvania", "2D", "Difficult", "Atmospheric", "Dark"]',
+    tags: ["Metroidvania", "2D", "Difficult", "Atmospheric", "Dark"],
     metacriticScore: 90,
     positiveReviews: 234567,
     negativeReviews: 4521,
-    platforms: '["windows", "mac", "linux"]',
+    platforms: ["windows", "mac", "linux"],
     videoUrl: "https://www.youtube.com/embed/42YQzRME-Ec",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/367520/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/367520/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/367520/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/367520/ss_2.jpg",
+    ],
   },
   {
     name: "Hades",
@@ -128,14 +145,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "Supergiant Games",
     publisher: "Supergiant Games",
     releaseDate: "2020-09-17",
-    tags: '["Roguelike", "Action", "Indie", "Mythology", "Story Rich"]',
+    tags: ["Roguelike", "Action", "Indie", "Mythology", "Story Rich"],
     metacriticScore: 93,
     positiveReviews: 198234,
     negativeReviews: 3123,
-    platforms: '["windows", "mac", "linux"]',
+    platforms: ["windows", "mac", "linux"],
     videoUrl: "https://www.youtube.com/embed/3OjJr0hM3iM",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/ss_2.jpg",
+    ],
   },
   {
     name: "Red Dead Redemption 2",
@@ -150,14 +169,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "Rockstar Games",
     publisher: "Rockstar Games",
     releaseDate: "2019-12-05",
-    tags: '["Open World", "Western", "Story Rich", "Multiplayer", "Third-Person"]',
+    tags: ["Open World", "Western", "Story Rich", "Multiplayer", "Third-Person"],
     metacriticScore: 97,
     positiveReviews: 345678,
     negativeReviews: 34567,
-    platforms: '["windows"]',
+    platforms: ["windows"],
     videoUrl: "https://www.youtube.com/embed/eaW0T0Uixc",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/1174180/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/1174180/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1174180/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1174180/ss_2.jpg",
+    ],
   },
   {
     name: "God of War",
@@ -170,14 +191,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "Santa Monica Studio",
     publisher: "Sony Interactive Entertainment",
     releaseDate: "2022-01-14",
-    tags: '["Action", "Mythology", "Story Rich", "Third-Person", "Singleplayer"]',
+    tags: ["Action", "Mythology", "Story Rich", "Third-Person", "Singleplayer"],
     metacriticScore: 94,
     positiveReviews: 289456,
     negativeReviews: 12456,
-    platforms: '["windows"]',
+    platforms: ["windows"],
     videoUrl: "https://www.youtube.com/embed/FyIwLFX5Abo",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/1593500/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/1593500/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1593500/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1593500/ss_2.jpg",
+    ],
   },
   {
     name: "Sekiro: Shadows Die Twice",
@@ -190,14 +213,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "FromSoftware",
     publisher: "Activision",
     releaseDate: "2019-03-22",
-    tags: '["Action", "Souls-like", "Ninja", "Difficult", "Historical"]',
+    tags: ["Action", "Souls-like", "Ninja", "Difficult", "Historical"],
     metacriticScore: 90,
     positiveReviews: 178234,
     negativeReviews: 18234,
-    platforms: '["windows"]',
+    platforms: ["windows"],
     videoUrl: "https://www.youtube.com/embed/C8bMVDcAi6k",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/814380/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/814380/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/814380/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/814380/ss_2.jpg",
+    ],
   },
   {
     name: "The Witcher 3: Wild Hunt - Complete Edition",
@@ -212,14 +237,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "CD PROJEKT RED",
     publisher: "CD PROJEKT RED",
     releaseDate: "2015-05-18",
-    tags: '["Open World", "RPG", "Fantasy", "Story Rich", "Third-Person"]',
+    tags: ["Open World", "RPG", "Fantasy", "Story Rich", "Third-Person"],
     metacriticScore: 93,
     positiveReviews: 456789,
     negativeReviews: 23456,
-    platforms: '["windows"]',
+    platforms: ["windows"],
     videoUrl: "https://www.youtube.com/embed/XdtP9d9lX-k",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/292030/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/ss_2.jpg",
+    ],
   },
   {
     name: "Persona 5 Royal",
@@ -232,14 +259,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "ATLUS",
     publisher: "SEGA",
     releaseDate: "2022-10-21",
-    tags: '["RPG", "Anime", "Turn-based", "Story Rich", "School"]',
+    tags: ["RPG", "Anime", "Turn-based", "Story Rich", "School"],
     metacriticScore: 95,
     positiveReviews: 234567,
     negativeReviews: 6789,
-    platforms: '["windows"]',
+    platforms: ["windows"],
     videoUrl: "https://www.youtube.com/embed/1fK5Ml-QXR8",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/1687950/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/1687950/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1687950/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1687950/ss_2.jpg",
+    ],
   },
   {
     name: "Monster Hunter World: Iceborne",
@@ -252,14 +281,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "CAPCOM CO., LTD.",
     publisher: "CAPCOM CO., LTD.",
     releaseDate: "2020-01-09",
-    tags: '["Action", "Co-op", "Open World", "Multiplayer", "Hunting"]',
+    tags: ["Action", "Co-op", "Open World", "Multiplayer", "Hunting"],
     metacriticScore: 90,
     positiveReviews: 234123,
     negativeReviews: 34567,
-    platforms: '["windows"]',
+    platforms: ["windows"],
     videoUrl: "https://www.youtube.com/embed/nlH5gT9Dq1A",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/582010/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/582010/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/582010/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/582010/ss_2.jpg",
+    ],
   },
   {
     name: "Terraria",
@@ -272,14 +303,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "Re-Logic",
     publisher: "Re-Logic",
     releaseDate: "2011-05-16",
-    tags: '["Sandbox", "2D", "Crafting", "Multiplayer", "Survival"]',
+    tags: ["Sandbox", "2D", "Crafting", "Multiplayer", "Survival"],
     metacriticScore: 95,
     positiveReviews: 567890,
     negativeReviews: 18234,
-    platforms: '["windows", "mac", "linux"]',
+    platforms: ["windows", "mac", "linux"],
     videoUrl: "https://www.youtube.com/embed/6rS5s2p2aQk",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/105600/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/105600/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/105600/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/105600/ss_2.jpg",
+    ],
   },
   {
     name: "Valheim",
@@ -292,14 +325,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "Iron Gate AB",
     publisher: "Coffee Stain Publishing",
     releaseDate: "2021-02-02",
-    tags: '["Survival", "Crafting", "Viking", "Open World", "Multiplayer"]',
+    tags: ["Survival", "Crafting", "Viking", "Open World", "Multiplayer"],
     metacriticScore: 85,
     positiveReviews: 298765,
     negativeReviews: 34123,
-    platforms: '["windows"]',
+    platforms: ["windows"],
     videoUrl: "https://www.youtube.com/embed/w5xh4kL9Y6c",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/892970/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/892970/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/892970/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/892970/ss_2.jpg",
+    ],
   },
   {
     name: "Among Us",
@@ -312,14 +347,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "InnerSloth LLC",
     publisher: "InnerSloth LLC",
     releaseDate: "2018-11-16",
-    tags: '["Multiplayer", "Party", "Social Deduction", "Funny", "Online Co-op"]',
+    tags: ["Multiplayer", "Party", "Social Deduction", "Funny", "Online Co-op"],
     metacriticScore: 80,
     positiveReviews: 567890,
     negativeReviews: 89012,
-    platforms: '["windows", "mac"]',
+    platforms: ["windows", "mac"],
     videoUrl: "https://www.youtube.com/embed/NW091H0nK0o",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/945360/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/945360/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/945360/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/945360/ss_2.jpg",
+    ],
   },
   {
     name: "Portal 2",
@@ -332,14 +369,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "Valve",
     publisher: "Valve",
     releaseDate: "2011-04-19",
-    tags: '["Puzzle", "Co-op", "First-Person", "Sci-Fi", "Comedy"]',
+    tags: ["Puzzle", "Co-op", "First-Person", "Sci-Fi", "Comedy"],
     metacriticScore: 95,
     positiveReviews: 423456,
     negativeReviews: 5123,
-    platforms: '["windows", "mac", "linux"]',
+    platforms: ["windows", "mac", "linux"],
     videoUrl: "https://www.youtube.com/embed/S2p0-0M1GvY",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/620/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/620/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/620/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/620/ss_2.jpg",
+    ],
   },
   {
     name: "Factorio",
@@ -352,14 +391,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "Wube Software",
     publisher: "Wube Software",
     releaseDate: "2020-08-14",
-    tags: '["Simulation", "Automation", "Building", "Strategy", "Survival"]',
+    tags: ["Simulation", "Automation", "Building", "Strategy", "Survival"],
     metacriticScore: 91,
     positiveReviews: 123456,
     negativeReviews: 5678,
-    platforms: '["windows", "mac", "linux"]',
+    platforms: ["windows", "mac", "linux"],
     videoUrl: "https://www.youtube.com/embed/Qu_I96JU7r0",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/427520/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/427520/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/427520/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/427520/ss_2.jpg",
+    ],
   },
   {
     name: "Darkest Dungeon",
@@ -372,14 +413,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "Red Hook Studios",
     publisher: "Red Hook Studios",
     releaseDate: "2016-01-19",
-    tags: '["Roguelike", "Turn-based", "Gothic", "Difficult", "Dark"]',
+    tags: ["Roguelike", "Turn-based", "Gothic", "Difficult", "Dark"],
     metacriticScore: 84,
     positiveReviews: 134567,
     negativeReviews: 18234,
-    platforms: '["windows", "mac", "linux"]',
+    platforms: ["windows", "mac", "linux"],
     videoUrl: "https://www.youtube.com/embed/4XgXG5aS3wY",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/262060/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/262060/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/262060/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/262060/ss_2.jpg",
+    ],
   },
   {
     name: "Doom Eternal",
@@ -392,14 +435,16 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "id Software",
     publisher: "Bethesda Softworks",
     releaseDate: "2020-03-20",
-    tags: '["FPS", "Action", "Demons", "Fast-Paced", "Shooter"]',
+    tags: ["FPS", "Action", "Demons", "Fast-Paced", "Shooter"],
     metacriticScore: 88,
     positiveReviews: 156789,
     negativeReviews: 18234,
-    platforms: '["windows", "mac", "linux"]',
+    platforms: ["windows", "mac", "linux"],
     videoUrl: "https://www.youtube.com/embed/V008I0a2G1s",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/782330/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/782330/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/782330/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/782330/ss_2.jpg",
+    ],
   },
   {
     name: "Vampire Survivors",
@@ -412,13 +457,15 @@ export const DATA: Omit<typeof games.$inferInsert, "id">[] = [
     developer: "Poncle",
     publisher: "Poncle",
     releaseDate: "2022-10-20",
-    tags: '["Roguelike", "Bullet Hell", "Survival", "Indie", "Retro"]',
+    tags: ["Roguelike", "Bullet Hell", "Survival", "Indie", "Retro"],
     metacriticScore: 89,
     positiveReviews: 345678,
     negativeReviews: 6789,
-    platforms: '["windows"]',
+    platforms: ["windows"],
     videoUrl: "https://www.youtube.com/embed/gWb8Y1w7p3Y",
-    screenshots:
-      '["https://cdn.cloudflare.steamstatic.com/steam/apps/1794680/ss_1.jpg", "https://cdn.cloudflare.steamstatic.com/steam/apps/1794680/ss_2.jpg"]',
+    screenshots: [
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1794680/ss_1.jpg",
+      "https://cdn.cloudflare.steamstatic.com/steam/apps/1794680/ss_2.jpg",
+    ],
   },
 ];

@@ -16,7 +16,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      siteUrl: "",
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || "",
     },
   },
 
@@ -24,12 +24,31 @@ export default defineNuxtConfig({
     db: {
       dialect: "postgresql",
       driver: process.env.DATABASE_DRIVER as any,
+      casing: "snake_case",
     },
     kv: true,
   },
 
   auth: {
     hubSecondaryStorage: true,
+    schema: {
+      casing: "snake_case",
+    },
+    redirects: {
+      login: "/login",
+      guest: "/",
+      authenticated: "/",
+      logout: "/login",
+    },
+    preserveRedirect: true,
+  },
+
+  routeRules: {
+    "/admin/**": { auth: { user: { role: "admin" } } },
+    "/account/**": { auth: "user" },
+    "/login": { auth: "guest" },
+    "/register": { auth: "guest" },
+    "/checkout/**": { auth: "user" },
   },
 
   nitro: {

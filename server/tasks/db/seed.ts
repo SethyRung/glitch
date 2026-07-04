@@ -1,49 +1,30 @@
-import { db } from "@nuxthub/db";
-import { games, users } from "hub:db:schema";
-import bcrypt from "bcryptjs";
+import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
-import { DATA, DEMO_USER } from "#server/data";
+import { db } from "@nuxthub/db";
+import { games, user } from "hub:db:schema";
+import { DATA, DEMO_ADMIN, DEMO_USER } from "#server/data";
 
 /**
  * Seed task for database initialization.
- * Creates default demo user and video game products from Steam.
+ *
+ * Creates demo admin + user accounts via Better Auth, then seeds the games
+ * catalog. Idempotent: re-running skips rows that already exist.
  */
 export default defineTask({
   meta: {
     name: "db:seed",
-    description: "Seed database with demo user and Steam game products",
+    description: "Seed database with demo users and Steam game products",
   },
   async run() {
     console.log("🌱 Starting database seed...");
 
     try {
-      // Check if demo user already exists
-      const existingUser = await db.query.users.findFirst({
-        where: eq(users.email, DEMO_USER.email),
-      });
+      await seedUser(DEMO_ADMIN);
+      await seedUser(DEMO_USER);
 
-      if (!existingUser) {
-        // Hash password
-        const passwordHash = await bcrypt.hash(DEMO_USER.password, 10);
-
-        // Create demo user
-        await db.insert(users).values({
-          email: DEMO_USER.email,
-          passwordHash,
-          name: DEMO_USER.name,
-          balance: DEMO_USER.balance,
-        });
-
-        console.log(`Created demo user: ${DEMO_USER.email} (password: ${DEMO_USER.password})`);
-      } else {
-        console.log(`Demo user already exists: ${DEMO_USER.email}`);
-      }
-
-      // Check if games already exist
       const existingGames = await db.query.games.findMany();
       if (existingGames.length === 0) {
-        // Insert sample games
-        await db.insert(games).values(DATA);
+        await db.insert(games).values(DATA.map((game) => ({ id: randomUUID(), ...game })));
         console.log(`Created ${DATA.length} sample games`);
       } else {
         console.log(`Games already exist (${existingGames.length} items)`);
@@ -57,3 +38,44 @@ export default defineTask({
     }
   },
 });
+
+/**
+ * Idempotently upsert a user.
+ *
+ * Goes through Better Auth so the password hash, account row, and email
+ * verification state are written exactly the way the running app expects.
+ * After sign-up we patch `role` directly because the public sign-up endpoint
+ * always assigns `defaultRole` (here: `user`).
+ */
+async function seedUser(seed: {
+  email: string;
+  password: string;
+  name: string;
+  role: "admin" | "user";
+}): Promise<void> {
+  const existing = await db.query.user.findFirst({
+    where: eq(user.email, seed.email),
+  });
+
+  if (existing) {
+    if (existing.role !== seed.role) {
+      await db.update(user).set({ role: seed.role }).where(eq(user.id, existing.id));
+      console.log(`Updated role for ${seed.email} → ${seed.role}`);
+    } else {
+      console.log(`User already exists: ${seed.email}`);
+    }
+    return;
+  }
+
+  const auth = serverAuth();
+  const result = await auth.api.signUpEmail({
+    body: {
+      email: seed.email,
+      password: seed.password,
+      name: seed.name,
+    },
+  });
+
+  await db.update(user).set({ role: seed.role }).where(eq(user.id, result.user.id));
+  console.log(`Created ${seed.role} user: ${seed.email} (password: ${seed.password})`);
+}
