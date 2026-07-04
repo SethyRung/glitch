@@ -6,11 +6,11 @@ Use NuxtHub.
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['@nuxthub/core', '@onmax/nuxt-better-auth'],
+  modules: ["@nuxthub/core", "@onmax/nuxt-better-auth"],
   hub: {
-    db: 'sqlite',
+    db: "sqlite",
   },
-})
+});
 ```
 
 ## What the module does with NuxtHub
@@ -25,13 +25,13 @@ export default defineNuxtConfig({
 ```ts
 export default defineNuxtConfig({
   hub: {
-    db: 'sqlite',
+    db: "sqlite",
     kv: true,
   },
   auth: {
     hubSecondaryStorage: true,
   },
-})
+});
 ```
 
 Important:

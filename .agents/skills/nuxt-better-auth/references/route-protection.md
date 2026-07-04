@@ -13,11 +13,11 @@ Use route rules and page meta for navigation UX. Use `requireUserSession(event)`
 ```ts
 export default defineNuxtConfig({
   routeRules: {
-    '/app/**': { auth: 'user' },
-    '/login': { auth: 'guest' },
-    '/admin/**': { auth: { user: { role: 'admin' } } },
+    "/app/**": { auth: "user" },
+    "/login": { auth: "guest" },
+    "/admin/**": { auth: { user: { role: "admin" } } },
   },
-})
+});
 ```
 
 The same auth keys work under `nitro.routeRules`. If both `routeRules` and `nitro.routeRules` are set, the module reads `nitro.routeRules`.
@@ -51,11 +51,11 @@ The same broad rules still apply to app-owned pages and app-owned `/api/**` hand
 <script setup lang="ts">
 definePageMeta({
   auth: {
-    only: 'user',
-    redirectTo: '/login',
-    user: { role: ['admin', 'owner'] },
+    only: "user",
+    redirectTo: "/login",
+    user: { role: ["admin", "owner"] },
   },
-})
+});
 </script>
 ```
 

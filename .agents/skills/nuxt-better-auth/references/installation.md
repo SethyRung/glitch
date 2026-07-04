@@ -30,28 +30,28 @@ NUXT_PUBLIC_SITE_URL=https://your-domain.com
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['@onmax/nuxt-better-auth'],
-})
+  modules: ["@onmax/nuxt-better-auth"],
+});
 ```
 
 ## Minimal server config
 
 ```ts
-import { defineServerAuth } from '@onmax/nuxt-better-auth/config'
+import { defineServerAuth } from "@onmax/nuxt-better-auth/config";
 
 export default defineServerAuth({
   emailAndPassword: {
     enabled: true,
   },
-})
+});
 ```
 
 ## Minimal client config
 
 ```ts
-import { defineClientAuth } from '@onmax/nuxt-better-auth/config'
+import { defineClientAuth } from "@onmax/nuxt-better-auth/config";
 
-export default defineClientAuth({})
+export default defineClientAuth({});
 ```
 
 ## Important rules
@@ -65,15 +65,15 @@ export default defineClientAuth({})
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['@nuxthub/core', '@onmax/nuxt-better-auth'],
+  modules: ["@nuxthub/core", "@onmax/nuxt-better-auth"],
   hub: {
-    db: 'sqlite',
+    db: "sqlite",
     kv: true,
   },
   auth: {
     hubSecondaryStorage: true,
   },
-})
+});
 ```
 
 See [references/database.md](database.md) for schema setup.
@@ -84,11 +84,11 @@ For external auth backends:
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['@onmax/nuxt-better-auth'],
+  modules: ["@onmax/nuxt-better-auth"],
   auth: {
     clientOnly: true,
   },
-})
+});
 ```
 
 See [references/client-only.md](client-only.md) for full setup.

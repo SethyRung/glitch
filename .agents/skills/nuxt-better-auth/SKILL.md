@@ -23,16 +23,16 @@ Authentication module for Nuxt 4+ built on [Better Auth](https://www.better-auth
 
 ## Available Guidance
 
-| File                                                                 | Topics                                                                 |
-| -------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| **[references/installation.md](references/installation.md)**         | install flow, env vars, config files                                   |
+| File                                                                 | Topics                                                                      |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| **[references/installation.md](references/installation.md)**         | install flow, env vars, config files                                        |
 | **[references/client-auth.md](references/client-auth.md)**           | `useUserSession`, client methods, redirects, loading states, custom actions |
 | **[references/server-auth.md](references/server-auth.md)**           | `serverAuth`, session helpers, `refreshSessionCookieCache`, API enforcement |
-| **[references/route-protection.md](references/route-protection.md)** | route rules, page meta, API protection                                 |
-| **[references/plugins.md](references/plugins.md)**                   | plugin pairing between server and client                               |
-| **[references/database.md](references/database.md)**                 | NuxtHub schema generation, secondary storage                           |
-| **[references/client-only.md](references/client-only.md)**           | external Better Auth backends and `clientOnly` mode                    |
-| **[references/types.md](references/types.md)**                       | public auth types and augmentation                                     |
+| **[references/route-protection.md](references/route-protection.md)** | route rules, page meta, API protection                                      |
+| **[references/plugins.md](references/plugins.md)**                   | plugin pairing between server and client                                    |
+| **[references/database.md](references/database.md)**                 | NuxtHub schema generation, secondary storage                                |
+| **[references/client-only.md](references/client-only.md)**           | external Better Auth backends and `clientOnly` mode                         |
+| **[references/types.md](references/types.md)**                       | public auth types and augmentation                                          |
 
 ## Usage Pattern
 
@@ -49,37 +49,37 @@ Do not load every reference file by default. Pick the smallest file that matches
 
 ## Key Concepts
 
-| Concept                | Description                                                     |
-| ---------------------- | --------------------------------------------------------------- |
-| `useUserSession()`     | Client composable - user, session, loggedIn, refresh, sign-out |
-| `runWithSessionRefresh()` | Refresh local session after custom auth endpoints |
-| `requireUserSession()` | Server helper - throws 401/403 if not authenticated             |
+| Concept                       | Description                                                      |
+| ----------------------------- | ---------------------------------------------------------------- |
+| `useUserSession()`            | Client composable - user, session, loggedIn, refresh, sign-out   |
+| `runWithSessionRefresh()`     | Refresh local session after custom auth endpoints                |
+| `requireUserSession()`        | Server helper - throws 401/403 if not authenticated              |
 | `refreshSessionCookieCache()` | Refresh Better Auth's cached session cookie after server updates |
-| `auth` route mode      | `'user'`, `'guest'`, `{ user: {...} }`, or `false`              |
-| `serverAuth()`         | Get Better Auth instance in server routes                       |
+| `auth` route mode             | `'user'`, `'guest'`, `{ user: {...} }`, or `false`               |
+| `serverAuth()`                | Get Better Auth instance in server routes                        |
 
 ## Quick Reference
 
 ```ts
 // Client: useUserSession()
-const { user, loggedIn, signIn, signOut } = useUserSession()
-await signIn.email({ email, password }, { onSuccess: () => navigateTo('/') })
+const { user, loggedIn, signIn, signOut } = useUserSession();
+await signIn.email({ email, password }, { onSuccess: () => navigateTo("/") });
 ```
 
 ```ts
 // Client: custom auth endpoint
-await runWithSessionRefresh(() => $fetch('/api/custom-login', { method: 'POST', body }))
+await runWithSessionRefresh(() => $fetch("/api/custom-login", { method: "POST", body }));
 ```
 
 ```ts
 // Server: requireUserSession()
-const { user } = await requireUserSession(event, { user: { role: 'admin' } })
+const { user } = await requireUserSession(event, { user: { role: "admin" } });
 ```
 
 ```ts
 // Server: after updating fields returned by session helpers
-await updateCurrentUser(event)
-await refreshSessionCookieCache(event)
+await updateCurrentUser(event);
+await refreshSessionCookieCache(event);
 ```
 
 ```ts
