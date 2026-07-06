@@ -46,6 +46,7 @@ export default defineNuxtConfig({
   routeRules: {
     "/admin/**": { auth: { user: { role: "admin" } } },
     "/account/**": { auth: "user" },
+    "/library/**": { auth: "user" },
     "/login": { auth: "guest" },
     "/register": { auth: "guest" },
     "/forgot-password": { auth: "guest" },
