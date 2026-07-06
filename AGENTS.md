@@ -2,7 +2,7 @@
 
 ## Stack
 
-Nuxt 4 + Nuxt UI v4 + Tailwind v4. Drizzle ORM on PostgreSQL (via NuxtHub). Redis-backed NuxtHub KV. Auth via `@onmax/nuxt-better-auth` (Better Auth). Pinia + localStorage for client state. See `package.json`, `nuxt.config.ts`, and `DESIGN.md` (visual spec — read before any UI work).
+Nuxt 4 + Nuxt UI v4 + Tailwind v4. Drizzle ORM on PostgreSQL (via NuxtHub). Redis-backed NuxtHub KV. Auth via `@onmax/nuxt-better-auth` (Better Auth). Client state via VueUse `useLocalStorage` + per-feature composables under `app/composables/` (cart, wallet bridge). There is **no Pinia** in this repo. See `package.json`, `nuxt.config.ts`, and `DESIGN.md` (visual spec — read before any UI work). The active roadmap lives in `PLAN.md`.
 
 ## First-time setup
 
@@ -36,18 +36,23 @@ If `fmt:check` fails: `pnpm fmt`. Conventional commits (`feat(scope):`, `refacto
 
 ```
 app/
-  pages/          routes (file-based)
-  components/     auto-imported
+  pages/          routes (file-based) — including /cart, /checkout, /checkout/return
+  components/     auto-imported (AppHeader, GameCard, LibraryCard, BrandMark)
+  composables/    auto-imported (useCart, useWalletBridge)
   layouts/        default (site chrome) + auth
   utils/          auto-imported helpers (e.g. formatPrice)
 server/
-  api/            Nitro routes (always wrap in createResponse — see API shape)
-  db/schema.ts    custom tables: games, purchases
+  api/
+    games/        public catalog (GET list + by id)
+    library/      user-scoped reads of purchases
+    purchases/    POST create order; GET one; POST [id]/status (pay/fail)
+  db/schema.ts    custom tables: games, purchases (qty, orderGroupId, idempotencyKey)
   tasks/          Nitro tasks (db:seed)
   utils/          auto-imported on the server (response.ts, pagination.ts)
   auth.config.ts  defineServerAuth — admin plugin, email+password
 shared/types/     cross-cutting types — NOT auto-imported, import explicitly
 DESIGN.md         visual/UX source of truth — read before any UI work
+PLAN.md           implementation roadmap (P0..P3)
 ```
 
 ## API shape (enforced)

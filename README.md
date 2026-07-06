@@ -1,200 +1,130 @@
 # Glitch
 
-Game store web application for the WebBridge demo, featuring video game browsing, shopping cart, checkout with payment processing, and bidirectional communication with an Android banking app via WebViewJavascriptBridge.
+Game store web application for the WebBridge demo, featuring video game browsing,
+shopping cart, checkout with `WebViewJavascriptBridge` handoff to the EasyPay
+Android wallet, and a post-purchase library with receipts.
 
 ## Tech Stack
 
-- **Framework**: Nuxt 4 with App Router
-- **UI**: Vue 3 Composition API, Nuxt UI components
-- **Database**: PostgreSQL with Drizzle ORM
-- **Deployment**: NuxtHub (Edge deployment, HubKV cache, HubBlob storage)
-- **State Management**: Pinia with localStorage persistence
-- **Styling**: Tailwind CSS v4
-- **Features**: Video game catalog with trailers, reviews, DLC support
+- **Framework**: Nuxt 4 (App Router, file-based)
+- **UI**: Nuxt UI v4 + Tailwind CSS v4
+- **Database**: PostgreSQL via NuxtHub + Drizzle ORM
+- **State**: VueUse `useLocalStorage` (no Pinia — see [State management](#state-management))
+- **Auth**: Better Auth via `@onmax/nuxt-better-auth` (email + password, admin plugin)
 
 ## Prerequisites
 
 - Node.js 24+ and pnpm
-- Docker (for local PostgreSQL)
-- NuxtHub account (for production deployment)
+- Docker (for local PostgreSQL + Redis)
 
-## Installation
+## Quickstart
 
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd Glitch
-
-# Install dependencies
+docker-compose up -d              # postgres + redis
 pnpm install
+pnpm dev                          # migrations auto-applied by NuxtHub
+
+# Optional: 50+ games + demo users
+nuxthub task run db:seed
 ```
 
-## Development Setup
+Open <http://localhost:3000>. Sign in with `demo@easyshop.com` / `password123`
+(or the admin variant) advertised on `/login`.
 
-### 1. Start PostgreSQL Database (Local Development)
+## State management
+
+There is no Pinia in this repo. Cart state lives in `app/composables/useCart.ts`
+and persists to `localStorage` via VueUse `useLocalStorage("glitch.cart.v1")`.
+Auth state is exposed by `useUserSession()` from `@onmax/nuxt-better-auth`; that
+module handles cookie-based sessions and the admin role check.
+
+## Database commands
 
 ```bash
-docker-compose up -d
+pnpm exec nuxt db generate        # diff schema vs migrations; write a new SQL file
+pnpm exec nuxt db migrate         # apply pending migrations
+pnpm exec nuxt db sql "<QUERY>"   # run a one-off query
 ```
 
-### 2. Start Development Server
+Schemas live in `server/db/schema.ts` for custom tables (`games`,
+`purchases`). Auth-managed tables (`user`, `session`, `account`, `verification`)
+come from Better Auth and are imported via `hub:db:schema` (the colon form — see
+`AGENTS.md`).
 
-```bash
-pnpm dev
-```
-
-> **Note:** Migrations are automatically applied when starting the dev server.
-
-Open browser at http://localhost:3000
-
-### 3. (Optional) Seed Database with Sample Data
-
-```bash
-curl http://localhost:3000/_nitro/tasks/db:seed
-```
-
-## Database Commands
-
-```bash
-# Migrations
-pnpm exec nuxt db generate           # Generate migrations from schema
-pnpm exec nuxt db migrate            # Apply migrations to database
-pnpm exec nuxt db drop <TABLE>       # Drop a specific table
-pnpm exec nuxt db drop-all           # Drop all tables (destructive!)
-pnpm exec nuxt db sql "<QUERY>"      # Execute SQL query
-```
-
-### Production Build
-
-```bash
-pnpm build          # Build for production
-pnpm preview        # Preview production build
-```
-
-## Project Structure
+## Project structure
 
 ```
-Glitch/
-├── app/
-│   ├── components/      # Vue components
-│   ├── composables/     # Vue composables
-│   ├── layouts/         # Layout components
-│   ├── middleware/      # Route middleware
-│   ├── pages/           # File-based routing
-│   ├── stores/          # Pinia stores
-│   └── assets/
-│       └── css/main.css # Tailwind v4 theme
-├── server/
-│   ├── api/             # API routes (auth, games, purchases)
-│   ├── db/
-│   │   └── schema.ts    # Drizzle ORM schema (connection via NuxtHub)
-│   ├── tasks/           # Scheduled tasks (seeding, etc.)
-│   ├── middleware/      # Server middleware (auth)
-│   └── utils/           # Server utilities (auth, response helpers)
-└── shared/
-    └── types/           # TypeScript type definitions
+app/
+  pages/          file-based routes (cart, library, checkout, …)
+  components/     auto-imported (AppHeader, GameCard, LibraryCard, BrandMark)
+  composables/    auto-imported (useCart, useWalletBridge)
+  layouts/        default (site chrome) + auth
+  utils/          auto-imported helpers (formatPrice)
+server/
+  api/            Nitro routes — always wrap in createResponse
+  db/schema.ts    custom tables (games, purchases)
+  tasks/          db:seed (Nitro task, idempotent)
+  utils/          auto-imported server helpers (response, pagination)
+shared/types/     cross-cutting types — imported via #shared/types
+DESIGN.md         visual/UX source of truth — read before any UI work
+AGENTS.md         repo conventions — read before any contribution
+PLAN.md           implementation roadmap
 ```
 
-## Database Schema
+## API surface
 
-- **users** - User accounts with balance
-- **products** (games) - Video game catalog with pricing, trailers, reviews, DLC, and platform support
-- **purchases** - Game purchase transactions with payment status
-- **refresh_tokens** - JWT refresh token storage
+All endpoints return **HTTP 200**. Success and error are discriminated by
+`status.code` in the response envelope. See `shared/types/response.ts` for
+`ApiResponseCode` and the full envelope shape.
 
-## API Endpoints
+| Method | Path                         | Auth   | Purpose                                                                 |
+| ------ | ---------------------------- | ------ | ----------------------------------------------------------------------- |
+| GET    | `/api/games`                 | Public | Paginated catalog with `search`/`category`                              |
+| GET    | `/api/games/[id]`            | Public | Single game detail                                                      |
+| POST   | `/api/purchases`             | User   | Submit cart → create pending `purchases` rows; supports Idempotency-Key |
+| GET    | `/api/purchases/[id]`        | User   | One purchase, ownership-checked                                         |
+| POST   | `/api/purchases/[id]/status` | User   | Flip `pending` → `completed` / `failed` for the whole order group       |
+| GET    | `/api/library`               | User   | Same shape as before; reads `purchases`                                 |
+| GET    | `/api/library/[id]`          | User   | Single receipt, ownership-checked                                       |
+| GET    | `/api/library/stats`         | User   | Counts + `totalSpent` for header rollup                                 |
 
-All API responses follow a standardized format:
+Auth endpoints (`/api/auth/*`) are mounted by `@onmax/nuxt-better-auth`; the
+client composables are `useSignIn`, `useSignUp`, `useUserSession`,
+`useRequestPasswordReset`, `useResetPassword`.
 
-### Response Structure
+### Bridge handoff
 
-```ts
-interface Response<T> {
-  status: {
-    code: ResponseCode; // Response status code (see below)
-    message: string; // Human-readable message
-    requestId: string; // Unique request identifier for debugging
-    requestTime: number; // Request processing time in milliseconds
-  };
-  data: T; // Response payload (null on error)
-  meta?: {
-    // Present only for paginated list endpoints
-    total: number; // Total number of records
-    limit: number; // Records per page
-    offset: number; // Current page offset
-  };
-}
-```
+The user flow is:
 
-### Response Codes
+1. Cart → checkout → client POSTs `/api/purchases` (lines created `pending`).
+2. Client calls `useWalletBridge().pay({ orderGroupId, purchaseId, total, items, … })`.
+3. In an Android WebView running EasyPay, `pay()` invokes
+   `bridge.callHandler('wallet.requestPayment', payload, cb)`. In a desktop
+   browser the composable falls back to flipping the rows to `completed`
+   directly via `/api/purchases/[id]/status` so the demo works without a device.
+4. Client navigates to `/checkout/return?purchaseId=…&status=…`; the page
+   polls `/api/purchases/[id]` until the row leaves `pending`.
 
-| Code               | Description                                     |
-| ------------------ | ----------------------------------------------- |
-| `SUCCESS`          | Request completed successfully                  |
-| `ERROR`            | Generic error occurred                          |
-| `NOT_FOUND`        | Requested resource not found                    |
-| `VALIDATION_ERROR` | Invalid request data or missing required fields |
-| `UNAUTHORIZED`     | Authentication required or invalid credentials  |
-| `FORBIDDEN`        | Authenticated but lacks permission              |
-| `INVALID_REQUEST`  | Malformed request syntax                        |
-| `INTERNAL_ERROR`   | Server-side error                               |
+Shared types for the bridge wire format live in `shared/types/bridge.ts`
+(`BridgePayPayload`, `BridgePayResult`).
 
-### Authentication
+## Routes
 
-| Method | Endpoint             | Description                                           | Auth Required |
-| ------ | -------------------- | ----------------------------------------------------- | ------------- |
-| POST   | `/api/auth/register` | Register a new user                                   | No            |
-| POST   | `/api/auth/login`    | User login (returns `accessToken` and `refreshToken`) | No            |
-| POST   | `/api/auth/refresh`  | Refresh access token using `refreshToken`             | No            |
-| POST   | `/api/auth/logout`   | Logout (revoke specific refresh token)                | No            |
-| GET    | `/api/auth/me`       | Get current authenticated user                        | Yes           |
+| Path                                  | Auth   | Notes                                                 |
+| ------------------------------------- | ------ | ----------------------------------------------------- |
+| `/`                                   | Public | Hero + featured grid + how-it-works                   |
+| `/catalog`                            | Public | Search + category filter + pagination                 |
+| `/games/[id]`                         | Public | Detail page; add to cart                              |
+| `/cart`                               | User   | Lines + sticky summary                                |
+| `/checkout`                           | User   | Order summary + pay CTA (hand off to wallet)          |
+| `/checkout/return`                    | User   | Polls status; shows completed / failed / cancelled UI |
+| `/library`                            | User   | Owned + pending + failed + refunded                   |
+| `/library/[id]`                       | User   | Single receipt                                        |
+| `/account`                            | User   | Profile + admin shortcut                              |
+| `/login`                              | Guest  | Sign in                                               |
+| `/register`                           | Guest  | Sign up                                               |
+| `/forgot-password`, `/reset-password` | Guest  | Better Auth flow                                      |
 
-**Login Request Body:**
+## License
 
-```json
-{ "email": "user@example.com", "password": "your-password" }
-```
-
-**Login/Refresh Response:**
-
-```json
-{ "accessToken": "jwt-access-token", "refreshToken": "jwt-refresh-token" }
-```
-
-**Authorization Header (for protected routes):**
-
-```
-Authorization: Bearer <accessToken>
-```
-
-### Products (Games)
-
-| Method | Endpoint          | Description                              | Auth Required |
-| ------ | ----------------- | ---------------------------------------- | ------------- |
-| GET    | `/api/games`      | List games with filtering and pagination | Yes           |
-| GET    | `/api/games/[id]` | Get single game details                  | Yes           |
-
-**Query Parameters (GET /api/games):**
-
-- `limit` - Number of results (default: 20)
-- `offset` - Pagination offset (default: 0)
-- `category` - Filter by category
-- `search` - Search by game name
-
-### Purchases
-
-| Method | Endpoint              | Description                                  | Auth Required |
-| ------ | --------------------- | -------------------------------------------- | ------------- |
-| GET    | `/api/purchases`      | List purchases with filtering and pagination | Yes           |
-| GET    | `/api/purchases/[id]` | Get single purchase details                  | Yes           |
-
-**Query Parameters (GET /api/purchases):**
-
-- `limit` - Number of results (default: 20)
-- `offset` - Pagination offset (default: 0)
-- `status` - Filter by status (e.g., "pending", "completed", "failed")
-- `userId` - Filter by user ID
-
-## 🛡️ License
-
-This project is licensed under the [MIT License](LICENSE).
+MIT — see `LICENSE`.
