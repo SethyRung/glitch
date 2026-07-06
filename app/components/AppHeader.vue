@@ -2,6 +2,9 @@
 import type { NavigationMenuItem } from "@nuxt/ui";
 
 const { user } = useUserSession();
+const { items: cartItems } = useCart();
+
+const cartCount = computed(() => cartItems.value.reduce((sum, item) => sum + item.qty, 0));
 
 const navItems = computed<NavigationMenuItem[]>(() => [
   { label: "Catalog", to: "/catalog", icon: "i-lucide-gamepad-2" },
@@ -27,10 +30,11 @@ const navItems = computed<NavigationMenuItem[]>(() => [
       >
         <template #trailing>
           <UBadge
+            v-if="cartCount > 0"
             color="primary"
             variant="solid"
             :ui="{ base: 'px-1.5 py-0 text-[10px] font-mono' }"
-            label="0"
+            :label="String(cartCount)"
           />
         </template>
       </UButton>

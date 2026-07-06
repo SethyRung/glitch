@@ -17,6 +17,10 @@ useHead(() => ({
   title: game.value ? `${game.value.name} · Glitch` : "Game · Glitch",
 }));
 
+const { user } = useUserSession();
+const { add: addToCart } = useCart();
+const toast = useToast();
+
 const platformIcons: Record<string, string> = {
   windows: "i-lucide-monitor",
   mac: "i-lucide-apple",
@@ -43,6 +47,26 @@ const releasedAt = computed(() => {
     day: "numeric",
   });
 });
+
+function handleAddToCart() {
+  if (!game.value) return;
+  if (!user.value) {
+    void navigateTo(`/login?redirect=/games/${game.value.id}`);
+    return;
+  }
+  addToCart({
+    gameId: game.value.id,
+    name: game.value.name,
+    price: game.value.price,
+    originalPrice: game.value.originalPrice,
+    imageUrl: game.value.imageUrl,
+  });
+  toast.add({
+    title: `${game.value.name} added to cart`,
+    icon: "i-lucide-shopping-cart",
+    color: "success",
+  });
+}
 </script>
 
 <template>
@@ -131,11 +155,11 @@ const releasedAt = computed(() => {
 
           <div class="flex flex-wrap gap-2">
             <UButton
-              to="/login"
               color="primary"
               size="lg"
               icon="i-lucide-shopping-cart"
               label="Add to cart"
+              @click="handleAddToCart"
             />
             <UButton
               :to="`/cart?game=${game.id}`"

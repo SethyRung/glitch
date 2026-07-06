@@ -47,11 +47,12 @@ export default defineNuxtConfig({
     "/admin/**": { auth: { user: { role: "admin" } } },
     "/account/**": { auth: "user" },
     "/library/**": { auth: "user" },
+    "/cart": { auth: "user" },
+    "/checkout/**": { auth: "user" },
     "/login": { auth: "guest" },
     "/register": { auth: "guest" },
     "/forgot-password": { auth: "guest" },
     "/reset-password": { auth: "guest" },
-    "/checkout/**": { auth: "user" },
   },
 
   nitro: {
