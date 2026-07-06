@@ -7,42 +7,28 @@ export interface CartItem {
   qty: number;
 }
 
-const STORAGE_KEY = "glitch.cart.v1";
-
 function clampQty(qty: number): number {
   return Math.max(1, Math.min(99, Math.floor(qty)));
 }
 
-function loadFromStorage(): CartItem[] {
-  if (!import.meta.client) return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
-  } catch {
-    return [];
-  }
-}
-
+/**
+ * Cart state shared across components (via `useState`) and persisted to
+ * `localStorage` (via `useLocalStorage`). The cart is intentional SSR-empty:
+ * on the first paint, items `[]` are rendered; on mount, the localStorage
+ * value is hydrated once and `watch` keeps the two in sync afterwards.
+ */
 export function useCart() {
-  const items = ref<CartItem[]>([]);
+  const items = useState<CartItem[]>("cart:items", () => []);
+  const persisted = useLocalStorage<CartItem[]>("glitch.cart.v1", []);
 
-  if (import.meta.client) {
-    onMounted(() => {
-      items.value = loadFromStorage();
-    });
-
-    watch(
-      items,
-      (val) => {
-        try {
-          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(val));
-        } catch {
-          return;
-        }
-      },
-      { deep: true },
-    );
-  }
+  onMounted(() => {
+    if (persisted.value.length > 0 && items.value.length === 0) {
+      items.value = persisted.value;
+    }
+  });
+  watch(items, (next) => {
+    persisted.value = [...next];
+  });
 
   function add(payload: Omit<CartItem, "qty">, qty: number = 1) {
     const existing = items.value.find((item) => item.gameId === payload.gameId);
