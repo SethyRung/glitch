@@ -1,4 +1,5 @@
 import { relations } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
   index,
   integer,
@@ -8,6 +9,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { account, session, user } from "#auth/schema";
 
@@ -55,10 +57,13 @@ export const purchases = pgTable(
     gameId: text("game_id")
       .notNull()
       .references(() => games.id, { onDelete: "restrict" }),
+    qty: integer("qty").notNull().default(1),
     pricePaid: numeric("price_paid", { precision: 10, scale: 2 }).notNull(),
     status: purchaseStatus("status").notNull().default("pending"),
     paymentMethod: text("payment_method"),
     paymentReference: text("payment_reference"),
+    orderGroupId: text("order_group_id"),
+    idempotencyKey: text("idempotency_key"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()
@@ -69,6 +74,10 @@ export const purchases = pgTable(
     index("purchases_user_id_idx").on(table.userId),
     index("purchases_game_id_idx").on(table.gameId),
     index("purchases_status_idx").on(table.status),
+    index("purchases_order_group_id_idx").on(table.orderGroupId),
+    uniqueIndex("purchases_user_idempotency_key_uniq")
+      .on(table.userId, table.idempotencyKey)
+      .where(sql`${table.idempotencyKey} IS NOT NULL`),
   ],
 );
 
