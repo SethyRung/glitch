@@ -23,14 +23,15 @@ const query = computed(() => ({
   offset: (page.value - 1) * pageSize.value,
 }));
 
-const { data, pending, error } = await useFetch<GamesListResponse>("/api/games", {
+const { data, pending, error } = await useFetch("/api/games", {
   query,
   watch: [query],
 });
 
-const games = computed(() => data.value?.items ?? []);
-const categories = computed(() => ["All", ...(data.value?.categories ?? [])]);
-const total = computed(() => data.value?.total ?? 0);
+const envelope = computed(() => (isSuccessResponse(data.value) ? data.value : null));
+const games = computed(() => envelope.value?.data?.items ?? []);
+const categories = computed(() => ["All", ...(envelope.value?.data?.categories ?? [])]);
+const total = computed(() => envelope.value?.meta?.total ?? 0);
 
 watch([debouncedSearch, selectedCategory, pageSize], () => {
   page.value = 1;

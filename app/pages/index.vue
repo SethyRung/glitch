@@ -3,12 +3,13 @@ useHead({ title: "Glitch · WebBridge demo game store" });
 
 const FEATURED_LIMIT = 4;
 
-const { data, pending } = await useFetch<GamesListResponse>("/api/games", {
+const { data, pending } = await useFetch("/api/games", {
   query: { limit: FEATURED_LIMIT },
 });
 
 const featured = computed(() => {
-  const items = data.value?.items ?? [];
+  if (!isSuccessResponse(data.value)) return [];
+  const items = data.value.data?.items ?? [];
   return [...items].sort((a, b) => {
     const scoreA = a.metacriticScore ?? 0;
     const scoreB = b.metacriticScore ?? 0;
