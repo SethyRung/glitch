@@ -37,11 +37,10 @@ export type GameSummary = Pick<
 >;
 
 /**
- * Shape returned by GET /api/games for list views (catalog grid). Cards on
- * the home page can render straight off this without the description body.
+ * Body of the `data` field in a successful GET /api/games response. The
+ * total + limit + offset live in the envelope's `meta` instead.
  */
-export interface GamesListResponse {
+export interface GamesListData {
   items: GameSummary[];
-  total: number;
   categories: string[];
 }

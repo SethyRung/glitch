@@ -1,8 +1,11 @@
 import { and, asc, eq, ilike, sql } from "drizzle-orm";
 import { db } from "@nuxthub/db";
 import { games } from "hub:db:schema";
+import { ApiResponseCode } from "#shared/types";
+import type { ApiResponse, GameSummary, GamesListData } from "#shared/types";
+import { clampLimit, clampOffset } from "#server/utils/pagination";
 
-export default defineEventHandler(async (event): Promise<GamesListResponse> => {
+export default defineEventHandler(async (event): Promise<ApiResponse<GamesListData>> => {
   const query = getQuery(event);
   const search = typeof query.search === "string" ? query.search.trim() : "";
   const category = typeof query.category === "string" && query.category ? query.category : null;
@@ -42,9 +45,12 @@ export default defineEventHandler(async (event): Promise<GamesListResponse> => {
       .where(where),
   ]);
 
-  return {
-    items: rows as GameSummary[],
-    total: countRow[0]?.count ?? 0,
-    categories: distinctCategories.map((row) => row.category),
-  };
+  return createResponse(
+    { code: ApiResponseCode.Success },
+    {
+      items: rows as GameSummary[],
+      categories: distinctCategories.map((row) => row.category),
+    },
+    { total: countRow[0]?.count ?? 0, limit, offset },
+  );
 });
