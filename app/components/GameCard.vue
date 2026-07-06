@@ -11,8 +11,10 @@ const platformIcons: Record<string, string> = {
 </script>
 
 <template>
-  <article
-    class="group rounded-xl bg-default ring-1 ring-default overflow-hidden transition-all hover:ring-primary hover:-translate-y-px"
+  <NuxtLink
+    :to="`/games/${game.id}`"
+    :aria-label="`View ${game.name}`"
+    class="group block rounded-xl bg-default ring-1 ring-default overflow-hidden transition-all hover:ring-primary hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
   >
     <div class="relative aspect-video overflow-hidden bg-muted">
       <img
@@ -54,13 +56,9 @@ const platformIcons: Record<string, string> = {
             {{ formatPrice(game.originalPrice) }}
           </span>
         </div>
-        <UButton
-          :to="`/games/${game.id}`"
-          size="sm"
-          color="neutral"
-          variant="ghost"
-          trailing-icon="i-lucide-arrow-right"
-          :aria-label="`View ${game.name}`"
+        <UIcon
+          name="i-lucide-arrow-right"
+          class="size-4 text-toned group-hover:text-primary transition-colors"
         />
       </div>
 
@@ -75,5 +73,5 @@ const platformIcons: Record<string, string> = {
         </span>
       </div>
     </div>
-  </article>
+  </NuxtLink>
 </template>
