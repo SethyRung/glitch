@@ -281,7 +281,7 @@ white.
 
 Three faces, three jobs. All three are wired in `nuxt.config.ts` under
 `fonts.families` and exposed as Tailwind utilities `font-sans`, `font-mono`,
-and `font-pixel`.
+and `font-pixel-circle`.
 
 - **Geist Sans (`font-sans`)** — body, headings, buttons, game titles.
   Body sits at `1rem` / `1.6` for paragraphs and `1.125rem` / `1.7` for the
@@ -290,9 +290,9 @@ and `font-pixel`.
   chips, the logo mark, the cart's quantity steppers, and the footer
   caption. Always uppercase with `0.08em` tracking for labels; sentence
   case for terminal output and game metadata.
-- **Geist Pixel (`font-pixel`)** — exactly one or two words per H1/H2
+- **Geist Pixel (`font-pixel-circle`)** — exactly one or two words per H1/H2
   ("Glitch", "play instantly", "bridge to your bank"). Inline only, never
-  standalone, never in body copy. Apply with `font-pixel` on a `<span>`,
+  standalone, never in body copy. Apply with `font-pixel-circle` on a `<span>`,
   not by setting the whole heading to pixel — that breaks the H1's
   readability.
 
@@ -415,7 +415,7 @@ divide-default`. Question row on the muted surface, answer row on
 - **Button outline:** `UButton color="neutral" variant="outline"` for
   secondary actions ("Browse catalog", "View cart"). Same
   `outline-inverted/25` focus rule.
-- **Pixel accent word:** inline `<span>` swapping `font-pixel` + violet
+- **Pixel accent word:** inline `<span>` swapping `font-pixel-circle` + violet
   for one word inside an otherwise sans-serif headline. Always inside the
   H1 or H2 — never inside a paragraph, badge, or button label.
 - **Nav link:** `UNavigationMenu` with default `color="primary"` for the

@@ -54,7 +54,7 @@ async function onSubmit(event: { data: Schema }) {
         Account
       </span>
       <h1 class="text-4xl font-semibold tracking-[-0.02em] text-highlighted">
-        Join the <span class="font-pixel text-primary">catalog</span>
+        Join the <span class="font-pixel-circle text-primary">catalog</span>
       </h1>
       <p class="text-sm text-muted">Create an account to build a library and check out faster.</p>
     </header>

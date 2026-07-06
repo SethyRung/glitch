@@ -17,7 +17,7 @@ withDefaults(
     class="font-mono font-bold text-toned hover:text-default transition-colors"
     :class="[size === 'sm' && 'text-xs', size === 'md' && 'text-sm', size === 'lg' && 'text-base']"
   >
-    <span class="text-primary font-pixel -tracking-widest"> G </span>
+    <span class="text-primary font-pixel-circle -tracking-widest"> G </span>
     litch
   </NuxtLink>
 </template>

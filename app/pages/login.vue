@@ -46,7 +46,7 @@ async function onSubmit(event: { data: Schema }) {
         Account
       </span>
       <h1 class="text-4xl font-semibold tracking-[-0.02em] text-highlighted">
-        Welcome <span class="font-pixel text-primary">back</span>
+        Welcome <span class="font-pixel-circle text-primary">back</span>
       </h1>
       <p class="text-sm text-muted">Sign in to continue building your library.</p>
     </header>

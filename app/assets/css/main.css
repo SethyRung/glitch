@@ -4,7 +4,11 @@
 @theme static {
   --font-sans: "Geist", sans;
   --font-mono: "Geist Mono", monospace;
-  --font-pixel: "Geist Pixel", sans-serif;
+  --font-pixel-circle: "Geist Pixel Circle", sans-serif;
+  --font-pixel-grid: "Geist Pixel Grid", sans-serif;
+  --font-pixel-line: "Geist Pixel Line", sans-serif;
+  --font-pixel-square: "Geist Pixel Square", sans-serif;
+  --font-pixel-triangle: "Geist Pixel Triangle", sans-serif;
 }
 
 @utility no-scrollbar {
