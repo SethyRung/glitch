@@ -124,27 +124,23 @@ export default defineEventHandler(async (event): Promise<ApiResponse<CreatePurch
   }
 
   const orderGroupId = newId();
-  await db.transaction(async (tx) => {
-    const rows = [];
-    for (const item of items) {
-      const unitPrice = priceByGame.get(item.gameId)!;
-      const lineTotal = (Number(unitPrice) * item.qty).toFixed(2);
-      const rowId = newId();
-      rows.push({
-        id: rowId,
-        userId: user.id,
-        gameId: item.gameId,
-        qty: item.qty,
-        pricePaid: lineTotal,
-        status: "pending" as const,
-        paymentMethod: null,
-        paymentReference: null,
-        orderGroupId,
-        idempotencyKey: rows.length === 0 ? idempotencyKey : null,
-      });
-    }
-    await tx.insert(purchases).values(rows);
+  const rows = items.map((item, index) => {
+    const unitPrice = priceByGame.get(item.gameId)!;
+    const lineTotal = (Number(unitPrice) * item.qty).toFixed(2);
+    return {
+      id: newId(),
+      userId: user.id,
+      gameId: item.gameId,
+      qty: item.qty,
+      pricePaid: lineTotal,
+      status: "pending" as const,
+      paymentMethod: null,
+      paymentReference: null,
+      orderGroupId,
+      idempotencyKey: index === 0 ? idempotencyKey : null,
+    };
   });
+  await db.insert(purchases).values(rows);
 
   return await hydrate(orderGroupId);
 });
