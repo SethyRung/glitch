@@ -76,7 +76,7 @@ async function saveProfile() {
         Account
       </span>
       <h1 class="text-4xl font-semibold tracking-[-0.02em] text-highlighted">
-        Welcome <span class="font-pixel-circle text-primary">back</span>,
+        Welcome <PixelAccent>back</PixelAccent>,
         {{ user?.name ?? "player" }}
       </h1>
       <p class="text-sm text-muted">

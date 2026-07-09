@@ -49,12 +49,10 @@ const platformIcons: Record<string, string> = {
 
       <div class="flex items-end justify-between">
         <div class="flex items-baseline gap-2">
-          <span class="text-2xl font-semibold text-primary">
-            {{ formatPrice(game.price) }}
-          </span>
-          <span v-if="game.originalPrice" class="text-sm text-dimmed line-through">
-            {{ formatPrice(game.originalPrice) }}
-          </span>
+          <PriceTag
+            :original-price="game.originalPrice ? formatPrice(game.originalPrice) : undefined"
+            >{{ formatPrice(game.price) }}</PriceTag
+          >
         </div>
         <UIcon
           name="i-lucide-arrow-right"

@@ -67,7 +67,7 @@ async function onSubmit(event: { data: Schema }) {
         Account
       </span>
       <h1 class="text-4xl font-semibold tracking-[-0.02em] text-highlighted">
-        Set a new <span class="font-pixel-circle text-primary">password</span>
+        Set a new <PixelAccent>password</PixelAccent>
       </h1>
       <p class="text-sm text-muted">Pick something at least 8 characters long.</p>
     </header>

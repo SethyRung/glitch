@@ -35,8 +35,7 @@ const featured = computed(() => {
             <h1
               class="text-5xl sm:text-6xl font-semibold tracking-[-0.02em] leading-[1.05] text-highlighted"
             >
-              A <span class="font-pixel-circle text-primary">glitch</span> in the
-              <span class="font-pixel-circle text-primary">checkout</span> flow.
+              A <PixelAccent>glitch</PixelAccent> in the <PixelAccent>checkout</PixelAccent> flow.
             </h1>
 
             <p class="text-lg text-muted max-w-xl">
@@ -75,16 +74,13 @@ const featured = computed(() => {
             </div>
           </div>
 
-          <div class="rounded-xl ring-1 ring-default overflow-hidden bg-muted">
-            <div class="flex items-center gap-2 px-4 h-9 bg-muted border-b border-default">
-              <span class="size-2.5 rounded-full bg-primary/30" />
-              <span class="size-2.5 rounded-full bg-primary/50" />
-              <span class="size-2.5 rounded-full bg-primary/80" />
+          <TerminalFrame>
+            <template #chrome>
               <span class="ml-3 text-[11px] font-mono text-toned uppercase tracking-[0.08em]">
                 checkout · bridge.js
               </span>
-            </div>
-            <div class="bg-default p-5 space-y-2 font-mono text-sm">
+            </template>
+            <div class="p-5 space-y-2 font-mono text-sm">
               <p class="text-muted">
                 <span class="text-primary">▸</span> webbridge.on("pay", handler)
               </p>
@@ -103,13 +99,11 @@ const featured = computed(() => {
                 <span class="text-primary">▸</span> redirect("/library/ord_8f3a")
               </p>
             </div>
-            <div
-              class="px-4 h-8 flex items-center bg-muted border-t border-default text-[11px] font-mono text-dimmed"
-            >
+            <template #footer>
               <span class="size-1.5 rounded-full bg-success mr-2" />
               bridge ready · 12ms
-            </div>
-          </div>
+            </template>
+          </TerminalFrame>
         </div>
       </UContainer>
     </section>
@@ -127,7 +121,7 @@ const featured = computed(() => {
             <h2
               class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.05] text-highlighted"
             >
-              Top picks <span class="font-pixel-circle text-primary">this week</span>
+              Top picks <PixelAccent>this week</PixelAccent>
             </h2>
             <p class="text-sm text-muted max-w-xl">
               A handful of standouts from the demo catalog. Browse the rest once you're signed in.
@@ -167,8 +161,7 @@ const featured = computed(() => {
           <h2
             class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.05] text-highlighted"
           >
-            From catalog to <span class="font-pixel-circle text-primary">bank app</span>, in one
-            tap.
+            From catalog to <PixelAccent>bank app</PixelAccent>, in one tap.
           </h2>
           <p class="text-base text-muted">
             The catalog runs in a normal browser. Checkout posts to

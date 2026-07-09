@@ -98,7 +98,7 @@ async function onPay() {
       <h1
         class="text-4xl sm:text-5xl font-semibold tracking-[-0.02em] leading-[1.05] text-highlighted"
       >
-        Hand off to <span class="font-pixel-circle text-primary">EasyPay</span>
+        Hand off to <PixelAccent>EasyPay</PixelAccent>
       </h1>
       <p class="text-sm text-muted max-w-2xl">
         Tap pay to forward this order to your EasyPay wallet through
@@ -186,10 +186,10 @@ async function onPay() {
       </section>
 
       <aside class="space-y-4 lg:sticky lg:top-20">
-        <div class="rounded-xl bg-default ring-1 ring-default divide-y divide-default">
+        <AnswerBlock>
           <div class="px-5 py-4 flex items-center justify-between">
             <span class="text-xs font-mono uppercase tracking-[0.08em] text-toned">Total</span>
-            <span class="text-2xl font-semibold text-primary">{{ subtotalDisplay }}</span>
+            <PriceTag>{{ subtotalDisplay }}</PriceTag>
           </div>
           <div class="px-5 py-4 flex items-center justify-between">
             <span class="text-xs font-mono uppercase tracking-[0.08em] text-toned">Items</span>
@@ -211,7 +211,7 @@ async function onPay() {
               </span>
             </span>
           </div>
-        </div>
+        </AnswerBlock>
 
         <UButton
           color="primary"

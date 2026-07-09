@@ -62,9 +62,7 @@ const purchasedAt = computed(() => {
 
       <div class="flex items-end justify-between">
         <div class="space-y-0.5">
-          <div class="text-2xl font-semibold text-primary">
-            {{ formatPrice(item.pricePaid) }}
-          </div>
+          <PriceTag>{{ formatPrice(item.pricePaid) }}</PriceTag>
           <div class="text-[11px] font-mono text-toned uppercase tracking-[0.08em]">
             Purchased {{ purchasedAt }}
           </div>

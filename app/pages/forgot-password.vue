@@ -54,7 +54,7 @@ async function onSubmit(event: { data: Schema }) {
         Account
       </span>
       <h1 class="text-4xl font-semibold tracking-[-0.02em] text-highlighted">
-        Reset your <span class="font-pixel-circle text-primary">password</span>
+        Reset your <PixelAccent>password</PixelAccent>
       </h1>
       <p class="text-sm text-muted">
         Enter your email and we'll send you a link to pick a new one.

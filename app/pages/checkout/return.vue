@@ -128,7 +128,7 @@ const statusColor: Record<PurchaseStatus, "warning" | "success" | "error" | "neu
       <h1
         class="text-4xl sm:text-5xl font-semibold tracking-[-0.02em] leading-[1.05] text-highlighted"
       >
-        <span class="font-pixel-circle text-primary">Bridge</span> handoff
+        <PixelAccent>Bridge</PixelAccent> handoff
       </h1>
       <UBadge
         :color="statusColor[status]"
@@ -249,12 +249,10 @@ const statusColor: Record<PurchaseStatus, "warning" | "success" | "error" | "neu
           </p>
         </header>
 
-        <div class="rounded-xl bg-default ring-1 ring-default divide-y divide-default">
+        <AnswerBlock>
           <div class="px-5 py-4 flex items-center justify-between">
             <span class="text-xs font-mono uppercase tracking-[0.08em] text-toned">Paid</span>
-            <span class="text-2xl font-semibold text-primary">
-              {{ formatPrice(purchase.pricePaid) }}
-            </span>
+            <PriceTag>{{ formatPrice(purchase.pricePaid) }}</PriceTag>
           </div>
           <div class="px-5 py-4 flex items-center justify-between">
             <span class="text-xs font-mono uppercase tracking-[0.08em] text-toned">Status</span>
@@ -270,7 +268,7 @@ const statusColor: Record<PurchaseStatus, "warning" | "success" | "error" | "neu
             <span class="text-xs font-mono uppercase tracking-[0.08em] text-toned">Order ID</span>
             <span class="text-sm font-mono break-all text-right">{{ purchase.id }}</span>
           </div>
-        </div>
+        </AnswerBlock>
       </div>
     </article>
   </UContainer>

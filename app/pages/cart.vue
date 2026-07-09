@@ -41,7 +41,7 @@ const lineTotal = (item: CartItem) => formatPrice((Number(item.price) * item.qty
       <h1
         class="text-4xl sm:text-5xl font-semibold tracking-[-0.02em] leading-[1.05] text-highlighted"
       >
-        Your <span class="font-pixel-circle text-primary">cart</span>
+        Your <PixelAccent>cart</PixelAccent>
       </h1>
       <p class="text-sm text-muted">
         <ClientOnly>
@@ -142,16 +142,16 @@ const lineTotal = (item: CartItem) => formatPrice((Number(item.price) * item.qty
         </UTable>
 
         <aside class="space-y-4 lg:sticky lg:top-20">
-          <div class="rounded-xl bg-default ring-1 ring-default divide-y divide-default">
+          <AnswerBlock>
             <div class="px-5 py-4 flex items-center justify-between">
               <span class="text-xs font-mono uppercase tracking-[0.08em] text-toned">Subtotal</span>
-              <span class="text-2xl font-semibold text-primary">{{ subtotalDisplay }}</span>
+              <PriceTag>{{ subtotalDisplay }}</PriceTag>
             </div>
             <div class="px-5 py-4 flex items-center justify-between">
               <span class="text-xs font-mono uppercase tracking-[0.08em] text-toned">Items</span>
               <span class="text-sm text-default font-mono">{{ count }}</span>
             </div>
-          </div>
+          </AnswerBlock>
 
           <UButton
             to="/checkout"

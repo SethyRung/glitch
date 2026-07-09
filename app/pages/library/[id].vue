@@ -122,12 +122,10 @@ const purchasedAt = computed(() => {
           </p>
         </header>
 
-        <div class="rounded-xl bg-default ring-1 ring-default divide-y divide-default">
+        <AnswerBlock>
           <div class="p-5 flex items-center justify-between">
             <span class="text-xs font-mono uppercase tracking-[0.08em] text-toned">Price paid</span>
-            <span class="text-2xl font-semibold text-primary">
-              {{ formatPrice(item.pricePaid) }}
-            </span>
+            <PriceTag>{{ formatPrice(item.pricePaid) }}</PriceTag>
           </div>
 
           <div class="p-5 flex items-center justify-between gap-4">
@@ -155,7 +153,7 @@ const purchasedAt = computed(() => {
             <span class="text-xs font-mono uppercase tracking-[0.08em] text-toned">Order ID</span>
             <span class="text-sm text-default font-mono break-all text-right">{{ item.id }}</span>
           </div>
-        </div>
+        </AnswerBlock>
       </div>
     </article>
   </UContainer>

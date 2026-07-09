@@ -66,7 +66,7 @@ watch([selectedStatus], () => {
         <h1
           class="text-4xl sm:text-5xl font-semibold tracking-[-0.02em] leading-[1.05] text-highlighted"
         >
-          Your <span class="font-pixel-circle text-primary">library</span>
+          Your <PixelAccent>library</PixelAccent>
         </h1>
         <p class="text-sm text-muted max-w-xl">
           Games you've purchased from Glitch. Completed orders unlock the receipt; pending orders
@@ -98,7 +98,9 @@ watch([selectedStatus], () => {
         </div>
         <div class="space-y-1">
           <dt class="text-[10px] font-mono uppercase tracking-[0.08em] text-toned">Spent</dt>
-          <dd class="text-2xl font-semibold text-primary">{{ formatPrice(stats.totalSpent) }}</dd>
+          <dd>
+            <PriceTag>{{ formatPrice(stats.totalSpent) }}</PriceTag>
+          </dd>
         </div>
       </dl>
     </header>

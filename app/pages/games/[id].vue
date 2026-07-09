@@ -210,7 +210,7 @@ function handleAddToCart() {
       <section class="grid gap-10 lg:grid-cols-[2fr_3fr] items-start">
         <div class="space-y-3">
           <h2 class="text-2xl font-semibold tracking-[-0.02em] leading-[1.05] text-highlighted">
-            About this <span class="font-pixel-circle text-primary">game</span>
+            About this <PixelAccent>game</PixelAccent>
           </h2>
           <p class="text-default leading-relaxed whitespace-pre-line">{{ game.description }}</p>
         </div>

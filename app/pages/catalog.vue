@@ -60,7 +60,7 @@ function clearFilters() {
         <h1
           class="text-4xl sm:text-5xl font-semibold tracking-[-0.02em] leading-[1.05] text-highlighted"
         >
-          Browse the <span class="font-pixel-circle text-primary">full shelf</span>
+          Browse the <PixelAccent>full shelf</PixelAccent>
         </h1>
         <p class="text-sm text-muted">earch by name or narrow down by category.</p>
       </div>
