@@ -37,15 +37,15 @@ If `fmt:check` fails: `pnpm fmt`. Conventional commits (`feat(scope):`, `refacto
 ```
 app/
   pages/          routes (file-based) — including /cart, /checkout, /checkout/return
-  components/     auto-imported (AppHeader, GameCard, LibraryCard, BrandMark)
+  components/     auto-imported (AppHeader, AppFooter, GameCard, LibraryCard, BrandMark, PixelAccent, PriceTag, AnswerBlock, TerminalFrame)
   composables/    auto-imported (useCart, useWalletBridge)
   layouts/        default (site chrome) + auth
-  utils/          auto-imported helpers (e.g. formatPrice)
+  utils/          auto-imported helpers (format.ts → formatPrice; bridge.client.ts → WebView bridge)
 server/
   api/
     games/        public catalog (GET list + by id)
-    library/      user-scoped reads of purchases
-    purchases/    POST create order; GET one; POST [id]/status (pay/fail)
+    library/      user-scoped reads of purchases (incl. /library/stats)
+    purchases/    POST create order; GET one; POST [id]/confirm (pay/fail)
   db/schema.ts    custom tables: games, purchases (qty, orderGroupId, idempotencyKey)
   tasks/          Nitro tasks (db:seed)
   utils/          auto-imported on the server (response.ts, pagination.ts)
