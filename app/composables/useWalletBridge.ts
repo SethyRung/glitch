@@ -9,6 +9,7 @@ interface FinalizeArgs {
 
 interface WalletBridge {
   available: Ref<boolean>;
+  ready: Ref<boolean>;
   pay: (payload: BridgePayPayload) => Promise<BridgePayResult>;
   finalize: (purchaseId: string, args: FinalizeArgs) => Promise<void>;
 }
@@ -64,14 +65,20 @@ function bridgeCall(
 
 export function useWalletBridge(): WalletBridge {
   const available = ref(false);
+  const ready = ref(false);
 
   onMounted(() => {
     getBridge();
     let polls = 0;
     const tick = setInterval(() => {
-      if (getBridge()) {
+      const bridge = getBridge();
+      if (bridge) {
         available.value = true;
         clearInterval(tick);
+
+        bridge.registerHandler("wallet.ready", () => {
+          ready.value = true;
+        });
       } else if (++polls > 30) {
         clearInterval(tick);
       }
@@ -85,7 +92,7 @@ export function useWalletBridge(): WalletBridge {
       args.paymentMethod ??
       (args.status === "completed" ? "easypay-bridge" : "easypay-bridge-failed");
     body.paymentMethod = paymentMethod;
-    const res = await $fetch<ApiResponse<unknown>>(`/api/purchases/${purchaseId}/status`, {
+    const res = await $fetch<ApiResponse<unknown>>(`/api/purchases/${purchaseId}/confirm`, {
       method: "POST",
       body,
     });
@@ -142,5 +149,5 @@ export function useWalletBridge(): WalletBridge {
     };
   }
 
-  return { available, pay, finalize };
+  return { available, ready, pay, finalize };
 }
