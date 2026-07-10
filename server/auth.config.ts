@@ -12,9 +12,9 @@ export default defineServerAuth({
   },
   user: {
     additionalFields: {
-      nativeUserId:   { type: "string", required: false, unique: true },
+      nativeUserId: { type: "string", required: false, unique: true },
       bridgeLinkedAt: { type: "string", required: false },
-      bridgeIssuer:   { type: "string", required: false },
+      bridgeIssuer: { type: "string", required: false },
     },
   },
   plugins: [
