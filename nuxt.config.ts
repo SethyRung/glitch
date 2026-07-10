@@ -15,8 +15,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    bridgeSecret: "",
     public: {
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || "",
+      siteUrl: "",
     },
   },
 
