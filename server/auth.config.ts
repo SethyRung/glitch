@@ -10,6 +10,13 @@ export default defineServerAuth({
       console.log(`[auth] Password reset requested for ${user.email}: ${url}`);
     },
   },
+  user: {
+    additionalFields: {
+      nativeUserId:   { type: "string", required: false, unique: true },
+      bridgeLinkedAt: { type: "string", required: false },
+      bridgeIssuer:   { type: "string", required: false },
+    },
+  },
   plugins: [
     admin({
       defaultRole: "user",
