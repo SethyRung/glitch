@@ -1,7 +1,7 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 
 export function computeBridgeHash(userId: string, email: string): string {
-  const { bridgeSecret: secret } = useRuntimeConfig();
+  const { bridgeSharedSecret: secret } = useRuntimeConfig();
   if (!secret) throw new Error("NUXT_BRIDGE_SHARED_SECRET is not configured");
   return createHash("sha256").update(`${userId}${email}${secret}`).digest("hex");
 }
