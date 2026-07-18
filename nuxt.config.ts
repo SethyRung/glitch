@@ -18,6 +18,7 @@ export default defineNuxtConfig({
     bridgeSharedSecret: "",
     public: {
       siteUrl: "",
+      enableVConsole: "",
     },
   },
 
