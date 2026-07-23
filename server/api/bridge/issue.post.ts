@@ -74,10 +74,15 @@ export default defineEventHandler(async (event) => {
       message: "user upsert failed",
     });
   }
+  if (row.nativeUserId === null) {
+    return createResponse({
+      code: ApiResponseCode.InternalError,
+      message: "user missing nativeUserId",
+    });
+  }
 
-  const session = await createSession(event, row.id);
+  const redirect = typeof body.redirect === "string" ? body.redirect : "/";
+  const { raw: ticket } = mintTicket({ sub: row.nativeUserId, redirect });
 
-  await setSessionCookie(event, session.token);
-
-  return createResponse({ code: ApiResponseCode.Success }, null);
+  return createResponse({ code: ApiResponseCode.Success }, { ticket, redirect });
 });

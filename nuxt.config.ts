@@ -16,6 +16,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     bridgeSharedSecret: "",
+    bridgeTicketSecret: "",
     public: {
       siteUrl: "",
       enableVConsole: "",
