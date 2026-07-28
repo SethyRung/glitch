@@ -12,9 +12,11 @@ function newId() {
   return `u_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
-async function ensureBridgeUser(userId: string, email: string) {
+async function ensureBridgeUser(userId: string, name: string, email: string) {
   const existing = await db.select().from(user).where(eq(user.nativeUserId, userId)).limit(1);
   if (existing[0]) {
+    // First-seen name wins. We don't propagate renames from the partner side:
+    // the user may have edited their name locally and we shouldn't overwrite it.
     return existing[0];
   }
 
@@ -23,7 +25,7 @@ async function ensureBridgeUser(userId: string, email: string) {
     .values({
       id: newId(),
       email,
-      name: email.split("@")[0] ?? email,
+      name,
       nativeUserId: userId,
       bridgeLinkedAt: new Date().toISOString(),
       bridgeIssuer: ISSUER,
@@ -51,23 +53,25 @@ export default defineEventHandler(async (event) => {
   const body = raw as Record<string, unknown>;
   if (
     typeof body.userId !== "string" ||
+    typeof body.name !== "string" ||
+    body.name.length === 0 ||
     typeof body.email !== "string" ||
     typeof body.hash !== "string"
   ) {
     return createResponse({
       code: ApiResponseCode.InvalidRequest,
-      message: "userId, email, and hash are required",
+      message: "userId, name, email, and hash are required",
     });
   }
 
-  if (!verifyBridgeHash(body.userId, body.email, body.hash)) {
+  if (!verifyBridgeHash(body.userId, body.name, body.email, body.hash)) {
     return createResponse({
       code: ApiResponseCode.InvalidRequest,
       message: "hash mismatch",
     });
   }
 
-  const row = await ensureBridgeUser(body.userId, body.email);
+  const row = await ensureBridgeUser(body.userId, body.name, body.email);
   if (!row) {
     return createResponse({
       code: ApiResponseCode.InternalError,
