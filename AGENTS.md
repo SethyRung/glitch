@@ -16,9 +16,11 @@ Optional seed:
 
 ```bash
 nuxthub task run db:seed      # idempotent — creates demo users + 50+ games
+nuxthub task run db:clear     # destructive — truncates all tables + clears KV
+nuxthub task run db:reset     # db:clear + db:seed in one shot
 ```
 
-`db:seed` is in `server/tasks/db/seed.ts` and skips re-insert if `games` already has rows. To re-seed, `pnpm exec nuxt db sql "TRUNCATE games CASCADE"` first.
+`db:seed` lives in `server/tasks/db/seed.ts` and skips re-insert if `games` already has rows. `db:clear` (`server/tasks/db/clear.ts`) and `db:reset` (`server/tasks/db/reset.ts`) share helpers in `server/utils/db-seed.ts` and `server/utils/db-clear.ts`. `db:clear` wipes the auth tables (`user`, `session`, `account`, `verification`) plus `games` and `purchases`, and calls `kv.clear()` — invalidating every active session.
 
 ## Verify before committing
 
@@ -47,7 +49,7 @@ server/
     library/      user-scoped reads of purchases (incl. /library/stats)
     purchases/    POST create order; GET one; POST [id]/confirm (pay/fail)
   db/schema.ts    custom tables: games, purchases (qty, orderGroupId, idempotencyKey)
-  tasks/          Nitro tasks (db:seed)
+  tasks/          Nitro tasks (db:seed, db:clear, db:reset)
   utils/          auto-imported on the server (response.ts, pagination.ts)
   auth.config.ts  defineServerAuth — admin plugin, email+password
 shared/types/     cross-cutting types — NOT auto-imported, import explicitly
